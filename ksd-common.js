@@ -930,7 +930,7 @@ window.updateProduct = async function(productId, updatedData) {
     try {
         const { getDatabase, ref, update } = await import('https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js');
         const db = getDatabase();
-        await update(ref(db, 'products/' + productId), updatedData);
+        await update(ref(db, productId), updatedData);
         alert("✅ ອັບເດດສິນຄ້າສຳເລັດ!");
         location.reload(); // Refresh ໜ້າເວັບເພື່ອເບິ່ງຜົນລ້າສຸດ
     } catch (error) {
