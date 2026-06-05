@@ -127,6 +127,11 @@ function toggleSidebar() {
 
 function injectSharedUI() {
   // ໜ້າ admin ມີ sidebar ຂອງຕົວເອງ — ບໍ່ inject ເພິ່ມ
+  if (window.location.pathname.includes('admin.html')) {
+        return; 
+    }
+  if (window.IS_ADMIN_PAGE) return;if (document.body.classList.contains('auth-page'))
+        return;
   if (document.body.dataset.skipSidebar === 'true') return;
   if (!document.getElementById('sidebar-toggle-btn')) {
     const toggle = document.createElement('div');
@@ -392,7 +397,14 @@ function saveNewPassword() {
 // ========== AUTH SYSTEM ==========
 const KSD_USERS_KEY = 'ksd_users';
 const KSD_SESSION_KEY = 'ksd_logged_in';
-const ADMIN_PHONES = ['02054835745'];
+// ປ່ຽນຈາກ const ເປັນ var
+var ADMIN_PHONES = ['02054835745'];
+var DEFAULT_PRODUCTS = [
+    { id: 1, name: 'ນໍ້າໝາກພ້າວ ຊາດາ', price: 99000, desc: 'ນໍ້າໝາກພ້າວ ຫອມຫວານສົດຊື່ນ', image: 'Image/Coconut.jpeg' },
+    { id: 2, name: 'ນ້ຳມັນປາມກິ່ງສະດາ', price: 159000, desc: 'ບໍ່ວ່າຈະຜັດຈະທອດ ໄວ້ໃຈກິ່ງສະດາ', image: 'Image/ນ້ຳມັນ.jpeg' },
+    { id: 3, name: 'ນ້ຳອາໂລເວລ້າ', price: 99000, desc: 'ນ້ຳເຜິ້ງໝາກນາວ ພ້ອມເນື້ອຫວ້ານຫາງແຂ້', image: 'Image/ອາໂລເວລາ.jpeg' },
+    { id: 4, name: 'ນ້ຳໝາກໄມ້ຊາດາ', price: 99000, desc: 'ນ້ຳໝາກໄມ້ ຫອມຫວານ ຫຼາຍລົດຊາດ', image: 'Image/3.jpg' }
+];
 
 function isAdminUser(userOrPhone) {
   const phone = typeof userOrPhone === 'object'
@@ -634,7 +646,7 @@ function guardAdminAccess() {
 }
 
 // ========== PRODUCT RENDER (ໜ້າຫຼັກ + products.html) ==========
-const DEFAULT_PRODUCTS = [
+window.DEFAULT_PRODUCTS = [
   { id: 1, name: 'ນໍ້າໝາກພ້າວ ຊາດາ', price: 99000, desc: 'ນໍ້າໝາກພ້າວ ຫອມຫວານສົດຊື່ນ', image: 'Image/Coconut.jpeg' },
   { id: 2, name: 'ນ້ຳມັນປາມກິ່ງສະດາ', price: 159000, desc: 'ບໍ່ວ່າຈະເປັນຜັດຈະທອດ ໄວ້ໃຈກິ່ງສະດາ', image: 'Image/ນ້ຳມັນ.jpeg' },
   { id: 3, name: 'ນ້ຳອາໂລເວລ້າ', price: 99000, desc: 'ນ້ຳເຜິ້ງໝາກນາວ ພ້ອມເນື້ອຫວ້ານຫາງແຂ້ ຫອມຫວານ', image: 'Image/ອາໂລເວລາ.jpeg' },

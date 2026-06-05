@@ -668,3 +668,9 @@ body {
   .nav-menu ul li a { font-size: 13px; }
   .main-content { padding: 30px 15px; }
 }
+@media (max-width: 768px) {
+  .admin-sidebar { display: none; } /* ຊ່ອນ Sidebar ໃນຈໍມືຖື */
+}
+.password-change-section, .account-settings {
+    display: none !important;
+}

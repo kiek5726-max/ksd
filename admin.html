@@ -8,99 +8,146 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Noto Sans Lao', sans-serif; }
     body { background: #f8fafc; }
+    .admin-container { display: flex;
+    width: 100vw;
+    overflow-x: hidden;
+}
 
-    .admin-container { display: flex; min-height: 100vh; }
-
-    /* Sidebar */
-    .admin-sidebar { width: 240px; background: #0f172a; color: white; padding: 20px; flex-shrink: 0; }
-    .admin-sidebar h2 { font-size: 18px; margin-bottom: 25px; text-align: center; color: #38bdf8; }
+    /* ===== SIDEBAR ===== */
+    .admin-sidebar {
+      width: 220px; background: #0f172a; color: white;
+      padding: 20px 14px; flex-shrink: 0;
+    }
+    .admin-sidebar h2 { font-size: 17px; margin-bottom: 22px; text-align: center; color: #38bdf8; }
+    .admin-nav { display: flex; flex-direction: column; gap: 4px; }
     .admin-nav button {
       width: 100%; background: transparent; border: none;
       color: #cbd5e1; padding: 11px 14px; text-align: left;
       font-size: 14px; cursor: pointer; border-radius: 8px;
-      margin-bottom: 4px; font-family: 'Noto Sans Lao', sans-serif;
-      transition: all 0.2s;
+      font-family: 'Noto Sans Lao', sans-serif; transition: all 0.2s;
     }
-    .admin-nav button:hover, .admin-nav button.active { background: #1e293b; color: #38bdf8; }
+    .admin-nav button:hover { background: #1e293b; color: #7dd3fc; }
+    .admin-nav button.active { background: #1e3a5f; color: #38bdf8; font-weight: 600; }
 
-    /* Main */
-    .admin-main { flex: 1; padding: 30px; overflow-x: auto; }
+    /* ===== MAIN ===== */
+    .admin-main { flex: 1;
+    overflow-x: auto; /* ໃຫ້ Scroll ສະເພາະໃນຕາຕະລາງ ຖ້າຈຳເປັນ */
+    padding: 20px; }
     .admin-section { display: none; }
     .admin-section.active { display: block; }
 
-    .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin-bottom: 20px; }
-    .stat-row { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 20px; }
-    .stat-card { flex: 1; min-width: 140px; padding: 20px; border-radius: 10px; }
-    .stat-card h3 { font-size: 14px; color: #555; margin-bottom: 8px; }
+    .page-title { font-size: 22px; color: #0f172a; margin-bottom: 22px; font-weight: 700; }
+    .card { background: white; padding: 22px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin-bottom: 20px; }
+
+    /* stat cards */
+    .stat-row { display: flex; gap: 18px; flex-wrap: wrap; }
+    .stat-card { flex: 1; min-width: 130px; padding: 20px; border-radius: 10px; }
+    .stat-card h3 { font-size: 13px; color: #555; margin-bottom: 8px; }
     .stat-card p { font-size: 30px; font-weight: bold; }
 
+    /* form */
     .form-group { margin-bottom: 14px; }
-    .form-group label { display: block; margin-bottom: 5px; font-weight: 500; font-size: 14px; }
+    .form-group label { display: block; margin-bottom: 5px; font-weight: 500; font-size: 14px; color: #334155; }
     .form-control {
-      width: 100%; padding: 10px;
+      width: 100%; padding: 10px 12px;
       border: 1px solid #cbd5e1; border-radius: 6px;
-      font-size: 14px; font-family: 'Noto Sans Lao', sans-serif;
-      transition: border 0.2s;
+      font-size: 14px; font-family: 'Noto Sans Lao', sans-serif; transition: border 0.2s;
     }
-    .form-control:focus { outline: none; border-color: #0284c7; }
+    .form-control:focus { outline: none; border-color: #0284c7; box-shadow: 0 0 0 2px #bae6fd; }
+    .image-preview-box { margin-top: 8px; }
+    .image-preview-box img { max-width: 110px; max-height: 110px; border-radius: 8px; display: none; object-fit: cover; border: 1px dashed #cbd5e1; }
 
-    .btn { border: none; padding: 9px 18px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 14px; font-family: 'Noto Sans Lao', sans-serif; transition: 0.2s; }
-    .btn-blue { background: #0284c7; color: white; }
-    .btn-blue:hover { background: #0369a1; }
-    .btn-red { background: #ef4444; color: white; }
-    .btn-red:hover { background: #dc2626; }
-    .btn-gray { background: #64748b; color: white; }
-    .btn-gray:hover { background: #475569; }
-    .btn-yellow { background: #eab308; color: white; }
-    .btn-yellow:hover { background: #ca8a04; }
+    /* buttons */
+    .btn { border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px; font-family: 'Noto Sans Lao', sans-serif; transition: 0.18s; }
+    .btn-blue   { background: #0284c7; color: white; } .btn-blue:hover   { background: #0369a1; }
+    .btn-red    { background: #ef4444; color: white; } .btn-red:hover    { background: #dc2626; }
+    .btn-gray   { background: #64748b; color: white; } .btn-gray:hover   { background: #475569; }
+    .btn-yellow { background: #eab308; color: white; } .btn-yellow:hover { background: #ca8a04; }
+    .btn-green  { background: #16a34a; color: white; } .btn-green:hover  { background: #15803d; }
 
-    .admin-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-    .admin-table th, .admin-table td { border: 1px solid #e2e8f0; padding: 11px 14px; text-align: left; font-size: 14px; }
-    .admin-table th { background: #f1f5f9; font-weight: 600; }
+    /* table */
+    .admin-table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 14px; }
+    .admin-table th, .admin-table td { border: 1px solid #e2e8f0; padding: 10px 12px; text-align: left; vertical-align: middle; }
+    .admin-table th { background: #f1f5f9; font-weight: 600; color: #475569; }
     .admin-table tr:hover td { background: #f8fafc; }
     .prod-img { width: 50px; height: 50px; object-fit: cover; border-radius: 6px; }
 
-    .image-preview-box { margin-top: 10px; }
-    .image-preview-box img { max-width: 120px; max-height: 120px; border-radius: 8px; display: none; object-fit: cover; border: 1px dashed #cbd5e1; }
+    /* badges */
+    .badge-pending   { background:#fef3c7; color:#92400e; padding:3px 10px; border-radius:20px; font-size:12px; font-weight:600; }
+    .badge-delivered { background:#dcfce7; color:#166534; padding:3px 10px; border-radius:20px; font-size:12px; font-weight:600; }
 
-    /* Sidebar toggle for admin page */
-    .admin-sidebar-toggle {
-      display: none;
-      position: fixed; top: 12px; left: 12px; z-index: 999;
-      background: #0f172a; color: #38bdf8; border: none;
-      width: 40px; height: 40px; border-radius: 8px;
-      font-size: 20px; cursor: pointer; align-items: center; justify-content: center;
+    /* slip modal */
+    .modal-bg { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.65); z-index:9999; align-items:center; justify-content:center; }
+    .modal-bg.open { display:flex; }
+    .modal-box { background:white; padding:24px; border-radius:14px; max-width:90vw; max-height:90vh; text-align:center; }
+    .modal-box img { max-width:100%; max-height:70vh; border-radius:8px; }
+    .modal-box .close-btn { margin-top:12px; padding:8px 24px; background:#0f172a; color:white; border:none; border-radius:6px; cursor:pointer; font-size:14px; }
+
+    /* edit user modal box */
+    .edit-modal-inner { background:white; padding:28px; border-radius:14px; width:100%; max-width:400px; box-shadow:0 8px 32px rgba(0,0,0,0.18); }
+
+    /* mobile sidebar */
+    .sidebar-toggle-fab {
+      display:none; position:fixed; top:12px; left:12px; z-index:1000;
+      background:#0f172a; color:#38bdf8; border:none;
+      width:40px; height:40px; border-radius:8px; font-size:20px;
+      cursor:pointer; align-items:center; justify-content:center;
     }
-    @media (max-width: 768px) {
-      .admin-sidebar { position: fixed; left: -260px; top: 0; height: 100vh; z-index: 998; transition: left 0.3s; overflow-y: auto; }
-      .admin-sidebar.open { left: 0; }
-      .admin-sidebar-toggle { display: flex; }
-      .admin-main { padding: 60px 15px 30px; }
+    @media(max-width:768px) {
+      .admin-sidebar { position:fixed; left:-240px; top:0; height:100vh; z-index:998; transition:left 0.3s; overflow-y:auto; }
+      .admin-sidebar.open { left:0; }
+      .sidebar-toggle-fab { display:flex; }
+      .admin-main { padding:60px 14px 30px; }
     }
-
-    /* Status badge */
-    .badge-pending  { background:#fef3c7; color:#92400e; padding:3px 10px; border-radius:20px; font-size:12px; font-weight:600; white-space:nowrap; }
-    .badge-delivered{ background:#dcfce7; color:#166534; padding:3px 10px; border-radius:20px; font-size:12px; font-weight:600; white-space:nowrap; }
-
-    /* Slip modal */
-    .slip-modal-bg { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:9999; align-items:center; justify-content:center; }
-    .slip-modal-bg.open { display:flex; }
-    .slip-modal-box { background:white; padding:20px; border-radius:12px; max-width:90vw; max-height:90vh; text-align:center; }
-    .slip-modal-box img { max-width:100%; max-height:70vh; border-radius:8px; }
-    .slip-modal-box button { margin-top:12px; padding:8px 24px; background:#0f172a; color:white; border:none; border-radius:6px; cursor:pointer; font-size:14px; }
   </style>
+  <script>
+    // ບອກໃຫ້ JS ຮູ້ວ່າໜ້ານີ້ຄືໜ້າ Admin, ຢ່າໄປສ້າງ UI ຊ້ຳຊ້ອນ
+    window.IS_ADMIN_PAGE = true;
+</script>
 </head>
-<body data-admin-page="true" data-skip-sidebar="true">
+<body>
 
-<button class="admin-sidebar-toggle" id="sidebarToggle" onclick="document.querySelector('.admin-sidebar').classList.toggle('open')">☰</button>
+<!-- Mobile sidebar toggle -->
+<button class="sidebar-toggle-fab" onclick="document.querySelector('.admin-sidebar').classList.toggle('open')">☰</button>
 
-<!-- Slip image modal -->
-<div class="slip-modal-bg" id="slipModal" onclick="if(event.target===this)closeSlipModal()">
-  <div class="slip-modal-box">
-    <p style="font-weight:600; margin-bottom:10px;">📎 ໃບບິນການໂອນເງິນ</p>
+<!-- Slip modal -->
+<div class="modal-bg" id="slipModal" onclick="if(event.target===this)closeSlipModal()">
+  <div class="modal-box">
+    <p style="font-weight:600;margin-bottom:10px;">📎 ໃບບິນການໂອນເງິນ</p>
     <img id="slipModalImg" src="" alt="slip">
-    <br>
-    <button onclick="closeSlipModal()">ປິດ</button>
+    <br><button class="close-btn" onclick="closeSlipModal()">ປິດ</button>
+  </div>
+</div>
+
+<!-- Edit User Modal -->
+<div class="modal-bg" id="editUserModal" onclick="if(event.target===this)closeEditUserModal()">
+  <div class="edit-modal-inner">
+    <h3 style="margin-bottom:16px;color:#0f172a;">✏️ ແກ້ໄຂຂໍ້ມູນຜູ້ໃຊ້</h3>
+    <input type="hidden" id="editUserOldPhone">
+    <div class="form-group">
+      <label>ຊື່ ແລະ ນາມສະກຸນ</label>
+      <input type="text" id="editUserName" class="form-control" placeholder="ຊື່ຜູ້ໃຊ້...">
+    </div>
+    <div class="form-group">
+      <label>ເບີໂທ</label>
+      <input type="tel" id="editUserPhone" class="form-control" placeholder="020 XXXXXXXX">
+    </div>
+    <div class="form-group">
+      <label>ອາຍຸ</label>
+      <input type="number" id="editUserAge" class="form-control" min="1" max="120">
+    </div>
+    <div class="form-group">
+      <label>ທີ່ຢູ່</label>
+      <input type="text" id="editUserAddress" class="form-control" placeholder="ບ້ານ, ເມືອງ, ແຂວງ...">
+    </div>
+    <div class="form-group">
+      <label>ລະຫັດຜ່ານໃໝ່ <span style="color:#94a3b8;font-size:12px;">(ປ່ອຍຫວ່າງ = ຄົງເດີມ)</span></label>
+      <input type="password" id="editUserPass" class="form-control" placeholder="ລະຫັດຜ່ານໃໝ່...">
+    </div>
+    <div style="display:flex;gap:10px;margin-top:4px;">
+      <button class="btn btn-blue" onclick="saveEditUser()">💾 ບັນທຶກ</button>
+      <button class="btn btn-gray" onclick="closeEditUserModal()">ຍົກເລີກ</button>
+    </div>
   </div>
 </div>
 
@@ -109,21 +156,21 @@
   <!-- Sidebar -->
   <div class="admin-sidebar">
     <h2>⚙️ KSD Backend</h2>
-    <div class="admin-nav">
-      <button class="active" onclick="switchSection('dashboard', this)">📊 ແຜງຄວບຄຸມ</button>
-      <button onclick="switchSection('products', this)">📦 ຈັດການສິນຄ້າ</button>
-      <button onclick="switchSection('orders', this)">📜 ລາຍການສັ່ງຊື້</button>
-      <button onclick="switchSection('users', this)">👥 ຜູ້ໃຊ້ລົງທະບຽນ</button>
+    <div class="admin-nav" id="adminNav">
+      <button data-section="dashboard" class="active">📊 ແຜງຄວບຄຸມ</button>
+      <button data-section="products">📦 ຈັດການສິນຄ້າ</button>
+      <button data-section="orders">📜 ລາຍການສັ່ງຊື້</button>
+      <button data-section="users">👥 ຜູ້ໃຊ້ລົງທະບຽນ</button>
       <button onclick="window.location.href='index.html'">🌐 ໜ້າເວັບ</button>
     </div>
   </div>
 
-  <!-- Main -->
+  <!-- Main content -->
   <div class="admin-main">
 
-    <!-- Dashboard -->
+    <!-- DASHBOARD -->
     <div id="section-dashboard" class="admin-section active">
-      <h2>📊 ແຜງຄວບຄຸມ</h2>
+      <div class="page-title">📊 ແຜງຄວບຄຸມ</div>
       <div class="stat-row">
         <div class="stat-card" style="background:#e0f2fe;">
           <h3>ສິນຄ້າທັງໝົດ</h3>
@@ -140,74 +187,60 @@
       </div>
     </div>
 
-    <!-- Products -->
+    <!-- PRODUCTS -->
     <div id="section-products" class="admin-section">
-      <h2>📦 ຈັດການສິນຄ້າ</h2>
+      <div class="page-title">📦 ຈັດການສິນຄ້າ</div>
 
-      <div class="card" style="margin-top:20px;">
-        <h3 id="form-title">➕ ເພີ່ມສິນຄ້າໃໝ່</h3>
-        <form id="product-form" onsubmit="saveProduct(event)" style="margin-top:15px;">
+      <div class="card">
+        <h3 id="form-title" style="margin-bottom:14px;">➕ ເພີ່ມສິນຄ້າໃໝ່</h3>
+        <form id="productForm" onsubmit="saveProduct(event)">
           <input type="hidden" id="product-id">
           <div class="form-group">
             <label>ຊື່ສິນຄ້າ</label>
-            <input type="text" id="product-name" class="form-control" required>
+            <input type="text" id="product-name" class="form-control" required placeholder="ຊື່ສິນຄ້າ...">
           </div>
           <div class="form-group">
             <label>ລາຄາ (ກີບ)</label>
-            <input type="number" id="product-price" class="form-control" min="0" required>
+            <input type="number" id="product-price" class="form-control" min="0" required placeholder="0">
           </div>
           <div class="form-group">
             <label>ລາຍລະອຽດ</label>
-            <input type="text" id="product-desc" class="form-control" required>
+            <input type="text" id="product-desc" class="form-control" required placeholder="ລາຍລະອຽດ...">
           </div>
           <div class="form-group">
-            <label>🖼️ ຮູບສິນຄ້າ (ອັບໂຫຼດ)</label>
-            <input type="file" id="product-image-file" class="form-control" accept="image/*" onchange="previewUploadedImage()">
+            <label>🖼️ ຮູບສິນຄ້າ</label>
+            <input type="file" id="product-image-file" class="form-control" accept="image/*" onchange="previewProductImage()">
             <input type="hidden" id="product-image">
-            <div class="image-preview-box">
-              <img id="image-preview" src="" alt="preview">
-            </div>
+            <div class="image-preview-box"><img id="image-preview" src="" alt="preview"></div>
           </div>
-          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
             <button type="submit" class="btn btn-blue">💾 ບັນທຶກ</button>
             <button type="button" class="btn btn-gray" onclick="clearProductForm()">ລ້າງຟອມ</button>
           </div>
         </form>
       </div>
 
-      <h3 style="margin:20px 0 5px;">📋 ລາຍການສິນຄ້າ</h3>
+      <h3 style="margin:16px 0 4px;">📋 ລາຍການສິນຄ້າ</h3>
       <div style="overflow-x:auto;">
         <table class="admin-table">
           <thead>
-            <tr>
-              <th>ຮູບ</th>
-              <th>ຊື່ສິນຄ້າ</th>
-              <th>ລາຄາ</th>
-              <th>ລາຍລະອຽດ</th>
-              <th>ຈັດການ</th>
-            </tr>
+            <tr><th>ຮູບ</th><th>ຊື່ສິນຄ້າ</th><th>ລາຄາ</th><th>ລາຍລະອຽດ</th><th>ຈັດການ</th></tr>
           </thead>
           <tbody id="admin-product-list"></tbody>
         </table>
       </div>
     </div>
 
-    <!-- Orders -->
+    <!-- ORDERS -->
     <div id="section-orders" class="admin-section">
-      <h2>📜 ລາຍການສັ່ງຊື້</h2>
+      <div class="page-title">📜 ລາຍການສັ່ງຊື້</div>
       <div style="overflow-x:auto;">
-        <table class="admin-table" style="margin-top:20px;">
+        <table class="admin-table">
           <thead>
             <tr>
-              <th>ວັນທີ</th>
-              <th>ລູກຄ້າ</th>
-              <th>ເບີໂທ</th>
-              <th>ທີ່ຢູ່ຈັດສົ່ງ</th>
-              <th>ລາຍການ</th>
-              <th>ຍອດລວມ</th>
-              <th>ສະຖານະ</th>
-              <th>ໃບບິນ</th>
-              <th>ຈັດການ</th>
+              <th>ວັນທີ</th><th>ລູກຄ້າ</th><th>ເບີໂທ</th>
+              <th>ທີ່ຢູ່</th><th>ລາຍການ</th><th>ຍອດ</th>
+              <th>ສະຖານະ</th><th>ໃບບິນ</th><th>ຈັດການ</th>
             </tr>
           </thead>
           <tbody id="admin-order-list"></tbody>
@@ -215,20 +248,15 @@
       </div>
     </div>
 
-    <!-- Users -->
+    <!-- USERS -->
     <div id="section-users" class="admin-section">
-      <h2>👥 ຜູ້ໃຊ້ລົງທະບຽນ</h2>
+      <div class="page-title">👥 ຜູ້ໃຊ້ລົງທະບຽນ</div>
       <div style="overflow-x:auto;">
-        <table class="admin-table" style="margin-top:20px;">
+        <table class="admin-table">
           <thead>
             <tr>
-              <th>ຊື່</th>
-              <th>ເບີໂທ</th>
-              <th>ອາຍຸ</th>
-              <th>ທີ່ຢູ່</th>
-              <th>ຍົດ</th>
-              <th>ວັນທີລົງທະບຽນ</th>
-              <th>ຈັດການ</th>
+              <th>ຊື່</th><th>ເບີໂທ</th><th>ອາຍຸ</th>
+              <th>ທີ່ຢູ່</th><th>ຍົດ</th><th>ວັນທີລົງທະບຽນ</th><th>ຈັດການ</th>
             </tr>
           </thead>
           <tbody id="admin-user-list"></tbody>
@@ -236,165 +264,199 @@
       </div>
     </div>
 
-    <!-- Edit User Modal -->
-    <div id="editUserModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:9999; align-items:center; justify-content:center;">
-      <div style="background:white; padding:28px; border-radius:14px; width:100%; max-width:420px; box-shadow:0 8px 32px rgba(0,0,0,0.18);">
-        <h3 style="margin-bottom:18px; color:#0f172a;">✏️ ແກ້ໄຂຂໍ້ມູນຜູ້ໃຊ້</h3>
-        <input type="hidden" id="editUserPhone">
-        <div class="form-group">
-          <label>ຊື່ ແລະ ນາມສະກຸນ</label>
-          <input type="text" id="editUserName" class="form-control" placeholder="ຊື່ຜູ້ໃຊ້...">
-        </div>
-        <div class="form-group">
-          <label>ເບີໂທ (ໃໝ່)</label>
-          <input type="tel" id="editUserNewPhone" class="form-control" placeholder="020 XXXXXXXX">
-        </div>
-        <div class="form-group">
-          <label>ອາຍຸ</label>
-          <input type="number" id="editUserAge" class="form-control" min="1" max="120" placeholder="ອາຍຸ...">
-        </div>
-        <div class="form-group">
-          <label>ທີ່ຢູ່</label>
-          <input type="text" id="editUserAddress" class="form-control" placeholder="ບ້ານ, ເມືອງ, ແຂວງ...">
-        </div>
-        <div class="form-group">
-          <label>ລະຫັດຜ່ານໃໝ່ <span style="color:#94a3b8;font-size:12px;">(ຖ້າຕ້ອງການປ່ຽນ)</span></label>
-          <input type="password" id="editUserPassword" class="form-control" placeholder="ປ່ອຍຫວ່າງເພື່ອຄົງເດີມ">
-        </div>
-        <div style="display:flex; gap:10px; margin-top:8px;">
-          <button class="btn btn-blue" onclick="saveEditUser()">💾 ບັນທຶກ</button>
-          <button class="btn btn-gray" onclick="closeEditUserModal()">ຍົກເລີກ</button>
-        </div>
-      </div>
-    </div>
+  </div><!-- end admin-main -->
+</div><!-- end admin-container -->
 
-  </div>
-</div>
-
+<!-- ===== ksd-common.js MUST load first ===== -->
 <script src="ksd-common.js"></script>
+
 <script>
-  const ADMIN_PHONES = ['02054835745'];
-  const DEFAULT_PRODUCTS = [
-    { id: 1, name: 'ນໍ້າໝາກພ້າວ ຊາດາ',   price: 99000,  desc: 'ນໍ້າໝາກພ້າວ ຫອມຫວານສົດຊື່ນ',             image: 'Image/Coconut.jpeg' },
-    { id: 2, name: 'ນ້ຳມັນປາມກິ່ງສະດາ', price: 159000, desc: 'ບໍ່ວ່າຈະເປັນຜັດຈະທອດ ໄວ້ໃຈກິ່ງສະດາ',     image: 'Image/ນ້ຳມັນ.jpeg' },
-    { id: 3, name: 'ນ້ຳອາໂລເວລ້າ',       price: 99000,  desc: 'ນ້ຳເຜິ້ງໝາກນາວ ພ້ອມເນື້ອຫວ້ານຫາງແຂ້',    image: 'Image/ອາໂລເວລາ.jpeg' },
-    { id: 4, name: 'ນ້ຳໝາກໄມ້ຊາດາ',     price: 99000,  desc: 'ນ້ຳໝາກໄມ້ ຫອມຫວານ ຫຼາຍລົດຊາດ',           image: 'Image/3.jpg' },
-  ];
-
-  let products = JSON.parse(localStorage.getItem('backend_products')) || DEFAULT_PRODUCTS;
-  let orders   = JSON.parse(localStorage.getItem('backend_orders'))   || [];
-
-  // Seed default if first time
-  if (!localStorage.getItem('backend_products')) {
-    products = products.map(normalizeProduct).filter(Boolean);
-    localStorage.setItem('backend_products', JSON.stringify(products));
-  }
-
-  // ===== ADMIN ACCESS =====
-  function isAdminSession() {
-    const phone = String(localStorage.getItem('user_phone') || '').replace(/\s/g, '');
-    return localStorage.getItem('ksd_logged_in') === 'true' && ADMIN_PHONES.includes(phone);
-  }
-  if (!isAdminSession()) {
-    alert('⛔ ທ່ານບໍ່ມີສິດເຂົ້າເຖິງໜ້າ Admin');
-    window.location.href = localStorage.getItem('ksd_logged_in') === 'true' ? 'index.html' : 'login.html';
-  }
-
-  function escHtml(s) {
+    // ກວດສອບຄວາມປອດໄພກ່ອນ, ຖ້າຫາກຍັງບໍ່ມີຕົວແປໃຫ້ສ້າງຂຶ້ນ
+    if (typeof window.ADMIN_PHONES === 'undefined') {
+        window.ADMIN_PHONES = ['02054835745'];
+    }
+    
+    // ຟັງຊັນສຳລັບການປ່ຽນໜ້າໃນ Sidebar (ໃຫ້ແນ່ໃຈວ່າມັນຈະຖືກ Run ຫຼັງຈາກໄຟລ໌ທັງໝົດໂຫຼດແລ້ວ)
+    document.addEventListener('DOMContentLoaded', function() {
+        const navButtons = document.querySelectorAll('.admin-nav button');
+        navButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // ຈັດການ Logic ການປ່ຽນ section ຂອງເຈົ້າທີ່ນີ້
+                console.log("Menu clicked: " + this.innerText);
+            });
+        });
+    });
+</script>
+<script>
+  // ===== HELPERS =====
+  function esc(s) {
     return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
+  function escAttr(s) {
+    return String(s ?? '').replace(/'/g, '&#39;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
 
-  function normalizeProduct(p) {
-    if (!p || typeof p !== 'object') return null;
-    const name = String(p.name || '').trim();
-    if (!name) return null;
+  // ===== GUARD =====
+  (function guardAdmin() {
+    const phone = (localStorage.getItem('user_phone') || '').replace(/\s/g,'');
+    const loggedIn = localStorage.getItem('ksd_logged_in') === 'true';
+    if (!loggedIn || !ADMIN_PHONES.includes(phone)) {
+      alert('⛔ ທ່ານບໍ່ມີສິດເຂົ້າເຖິງໜ້າ Admin');
+      window.location.href = loggedIn ? 'index.html' : 'login.html';
+    }
+  })();
+
+  // ===== DEFAULT PRODUCTS =====
+  if (typeof DEFAULT_PRODUCTS === 'undefined') {
+    var DEFAULT_PRODUCTS = [
+        { id: 1, name: 'ນໍ້າໝາກພ້າວ ຊາດາ', price: 99000, desc: 'ນໍ້າໝາກພ້າວ ຫອມຫວານສົດຊື່ນ', image: 'Image/Coconut.jpeg' },
+        { id: 2, name: 'ນ້ຳມັນປາມກິ່ງສະດາ', price: 159000, desc: 'ບໍ່ວ່າຈະຜັດຈະທອດ ໄວ້ໃຈກິ່ງສະດາ', image: 'Image/ນ້ຳມັນ.jpeg' },
+        { id: 3, name: 'ນ້ຳອາໂລເວລ້າ', price: 99000, desc: 'ນ້ຳເຜິ້ງໝາກນາວ ພ້ອມເນື້ອຫວ້ານຫາງແຂ້', image: 'Image/ອາໂລເວລາ.jpeg' },
+        { id: 4, name: 'ນ້ຳໝາກໄມ້ຊາດາ', price: 99000, desc: 'ນ້ຳໝາກໄມ້ ຫອມຫວານ ຫຼາຍລົດຊາດ', image: 'Image/3.jpg' },
+    ];
+}
+
+  function normProd(p) {
+    if (!p || !p.name) return null;
     return {
-      id: p.id != null ? p.id : Date.now(),
-      name,
+      id:    p.id ?? Date.now(),
+      name:  String(p.name).trim(),
       price: Math.max(0, Number(p.price) || 0),
-      desc: String(p.desc || '').trim(),
+      desc:  String(p.desc || '').trim(),
       image: String(p.image || 'Image/KSD.svg').trim() || 'Image/KSD.svg',
     };
   }
 
+  function getProducts() {
+    try {
+      const arr = JSON.parse(localStorage.getItem('backend_products'));
+      if (Array.isArray(arr) && arr.length) return arr.map(normProd).filter(Boolean);
+    } catch {}
+    return DEFAULT_PRODUCTS.map(normProd).filter(Boolean);
+  }
+
   // ===== SWITCH SECTION =====
-  function switchSection(id, btn) {
+  // ใช้ event delegation บน #adminNav เพื่อหลีกเลี่ยง conflict
+  document.getElementById('adminNav').addEventListener('click', function(e) {
+    const btn = e.target.closest('button[data-section]');
+    if (!btn) return;
+    const id = btn.dataset.section;
+    // hide all
     document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
-    document.querySelectorAll('.admin-nav button').forEach(b => b.classList.remove('active'));
-    document.getElementById('section-' + id).classList.add('active');
-    if (btn) btn.classList.add('active');
-    loadAdminData();
+    // deactivate all nav buttons
+    document.querySelectorAll('#adminNav button').forEach(b => b.classList.remove('active'));
+    // show target
+    const target = document.getElementById('section-' + id);
+    if (target) target.classList.add('active');
+    btn.classList.add('active');
+    // close mobile sidebar
+    document.querySelector('.admin-sidebar').classList.remove('open');
+  });
+
+  // ===== RENDER PRODUCTS TABLE =====
+  function renderProductsTable() {
+    const products = getProducts();
+    document.getElementById('dash-prod-count').textContent = products.length;
+    const tbody = document.getElementById('admin-product-list');
+    if (!tbody) return;
+    if (!products.length) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#94a3b8;padding:20px;">ຍັງບໍ່ມີສິນຄ້າ</td></tr>';
+      return;
+    }
+    tbody.innerHTML = products.map(p => `
+      <tr>
+        <td><img src="${esc(p.image)}" class="prod-img" onerror="this.src='Image/KSD.svg'"></td>
+        <td><strong>${esc(p.name)}</strong></td>
+        <td>${Number(p.price).toLocaleString()} ກີບ</td>
+        <td>${esc(p.desc)}</td>
+        <td style="white-space:nowrap;">
+          <button class="btn btn-yellow" onclick="editProduct('${escAttr(String(p.id))}')" style="padding:5px 10px;font-size:12px;">✏️ ແກ້ໄຂ</button>
+          <button class="btn btn-red" onclick="deleteProduct('${escAttr(String(p.id))}')" style="padding:5px 10px;font-size:12px;margin-left:4px;">🗑 ລຶບ</button>
+        </td>
+      </tr>`).join('');
   }
 
-  // ===== LOAD DATA =====
-  function loadAdminData() {
-    products = (JSON.parse(localStorage.getItem('backend_products')) || DEFAULT_PRODUCTS)
-      .map(normalizeProduct).filter(Boolean);
-    orders = JSON.parse(localStorage.getItem('backend_orders')) || [];
-    const users = JSON.parse(localStorage.getItem('ksd_users')) || [];
-
-    document.getElementById('dash-prod-count').innerText  = products.length;
-    document.getElementById('dash-order-count').innerText = orders.length;
-    document.getElementById('dash-user-count').innerText = users.length;
-
-    // Products table
-    const prodList = document.getElementById('admin-product-list');
-    prodList.innerHTML = products.length === 0
-      ? '<tr><td colspan="5" style="text-align:center;color:#94a3b8;padding:20px;">ຍັງບໍ່ມີສິນຄ້າ</td></tr>'
-      : products.map(p => `
-          <tr>
-            <td><img src="${escHtml(p.image)}" class="prod-img" onerror="this.src='Image/KSD.svg'"></td>
-            <td><strong>${escHtml(p.name)}</strong></td>
-            <td>${Number(p.price).toLocaleString()} ກີບ</td>
-            <td>${escHtml(p.desc)}</td>
-            <td style="white-space:nowrap;">
-              <button class="btn btn-yellow" onclick="editProduct('${String(p.id).replace(/'/g, "\\'")}')" style="padding:5px 10px;font-size:13px;">ແກ້ໄຂ</button>
-              <button class="btn btn-red"    onclick="deleteProduct('${String(p.id).replace(/'/g, "\\'")}')" style="padding:5px 10px;font-size:13px;margin-left:4px;">ລຶບ</button>
-            </td>
-          </tr>
-        `).join('');
-
-    // Orders table
-    const orderList = document.getElementById('admin-order-list');
-    orderList.innerHTML = orders.length === 0
-      ? '<tr><td colspan="7" style="text-align:center;color:#64748b;padding:20px;">ຍັງບໍ່ມີອໍເດີ້</td></tr>'
-      : orders.map((o, i) => `
-          <tr>
-            <td>${escHtml(o.date)}</td>
-            <td><strong>${escHtml(o.customer || '-')}</strong></td>
-            <td>${escHtml(o.phone || '-')}</td>
-            <td style="max-width:200px; word-break:break-word;">${escHtml(o.address || '—')}</td>
-            <td style="max-width:220px; word-break:break-word;">${escHtml(o.items)}</td>
-            <td style="color:#ef4444; font-weight:bold;">${Number(o.total).toLocaleString()} ກີບ</td>
-            <td>
-              <button class="btn btn-red" onclick="deleteOrder(${i})" style="padding:5px 10px;font-size:13px;">ລຶບ</button>
-            </td>
-          </tr>
-        `).join('');
-
-    // Users table
-    const userList = document.getElementById('admin-user-list');
-    userList.innerHTML = users.length === 0
-      ? '<tr><td colspan="7" style="text-align:center;color:#64748b;padding:20px;">ຍັງບໍ່ມີຜູ້ໃຊ້</td></tr>'
-      : users.map(u => {
-          const isAdm = ADMIN_PHONES.includes(String(u.phone).replace(/\s/g, ''));
-          return `
-          <tr>
-            <td><strong>${escHtml(u.name)}</strong></td>
-            <td>${escHtml(u.phone)}</td>
-            <td>${escHtml(u.age || '—')}</td>
-            <td style="max-width:160px; word-break:break-word;">${escHtml(u.address || '—')}</td>
-            <td>${isAdm ? '👑 Admin' : '👤 Member'}</td>
-            <td style="white-space:nowrap;">${u.registeredAt ? new Date(u.registeredAt).toLocaleString('lo-LA') : '—'}</td>
-            <td style="white-space:nowrap;">
-              <button class="btn btn-yellow" onclick="openEditUserModal('${String(u.phone).replace(/'/g, "\\'")}')" style="padding:5px 10px;font-size:13px;">✏️ ແກ້ໄຂ</button>
-              ${isAdm ? '' : `<button class="btn btn-red" onclick="deleteUser('${String(u.phone).replace(/'/g, "\\'")}')\" style="padding:5px 10px;font-size:13px;margin-left:4px;">🗑 ລຶບ</button>`}
-            </td>
-          </tr>`;
-        }).join('');
+  // ===== RENDER USERS TABLE =====
+  function renderUsersTable() {
+    const users = JSON.parse(localStorage.getItem('ksd_users') || '[]');
+    document.getElementById('dash-user-count').textContent = users.length;
+    const tbody = document.getElementById('admin-user-list');
+    if (!tbody) return;
+    if (!users.length) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#94a3b8;padding:20px;">ຍັງບໍ່ມີຜູ້ໃຊ້</td></tr>';
+      return;
+    }
+    tbody.innerHTML = users.map(u => {
+      const isAdm = ADMIN_PHONES.includes(String(u.phone || '').replace(/\s/g,''));
+      const ph = escAttr(String(u.phone || ''));
+      return `
+      <tr>
+        <td><strong>${esc(u.name)}</strong></td>
+        <td>${esc(u.phone)}</td>
+        <td>${esc(u.age || '—')}</td>
+        <td style="max-width:160px;word-break:break-word;">${esc(u.address || '—')}</td>
+        <td>${isAdm ? '👑 Admin' : '👤 Member'}</td>
+        <td style="white-space:nowrap;">${u.registeredAt ? new Date(u.registeredAt).toLocaleString('lo-LA') : '—'}</td>
+        <td style="white-space:nowrap;">
+          <button class="btn btn-yellow" onclick="openEditUser('${ph}')" style="padding:5px 10px;font-size:12px;">✏️ ແກ້ໄຂ</button>
+          ${isAdm ? '' : `<button class="btn btn-red" onclick="deleteUser('${ph}')" style="padding:5px 10px;font-size:12px;margin-left:4px;">🗑 ລຶບ</button>`}
+        </td>
+      </tr>`;
+    }).join('');
+  }
+</script>
+<script>
+  // ===== RENDER ORDERS TABLE (localStorage fallback) =====
+  function renderOrdersTable() {
+    const orders = JSON.parse(localStorage.getItem('backend_orders') || '[]');
+    document.getElementById('dash-order-count').textContent = orders.length;
+    const tbody = document.getElementById('admin-order-list');
+    if (!tbody) return;
+    if (!orders.length) {
+      tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#94a3b8;padding:20px;">ຍັງບໍ່ມີອໍເດີ້</td></tr>';
+      return;
+    }
+    tbody.innerHTML = orders.map((o, i) => {
+      const fbKey = o._fbKey || '';
+      const isDelivered = o.status === 'delivered';
+      const badge = isDelivered
+        ? '<span class="badge-delivered">✅ ສົ່ງແລ້ວ</span>'
+        : '<span class="badge-pending">⏳ ລໍຖ້າ</span>';
+      const delBtn = fbKey
+        ? `<button class="btn btn-red" onclick="fbDeleteOrder('${escAttr(fbKey)}')" style="padding:4px 9px;font-size:12px;">🗑 ລຶບ</button>`
+        : `<button class="btn btn-red" onclick="localDeleteOrder(${i})" style="padding:4px 9px;font-size:12px;">🗑 ລຶບ</button>`;
+      const deliverBtn = (!isDelivered && fbKey)
+        ? `<button class="btn btn-green" onclick="fbMarkDelivered('${escAttr(fbKey)}')" style="padding:4px 9px;font-size:12px;">📦 ສົ່ງແລ້ວ</button>`
+        : '';
+      const slipBtn = (o.slipImage && fbKey)
+        ? `<button class="btn btn-blue" onclick="openSlipByKey('${escAttr(fbKey)}')" style="padding:4px 9px;font-size:12px;">👁 ໃບບິນ</button>`
+        : '<span style="color:#94a3b8;font-size:12px;">—</span>';
+      return `
+      <tr>
+        <td style="white-space:nowrap;">${esc(o.date || '—')}</td>
+        <td><strong>${esc(o.customer || o.name || '—')}</strong></td>
+        <td style="white-space:nowrap;">${esc(o.phone || '—')}</td>
+        <td style="max-width:140px;word-break:break-word;">${esc(o.address || '—')}</td>
+        <td style="max-width:180px;word-break:break-word;">${esc(o.items || '—')}</td>
+        <td style="color:#ef4444;font-weight:bold;white-space:nowrap;">${Number(o.total || 0).toLocaleString()} ກີບ</td>
+        <td>${badge}</td>
+        <td>${slipBtn}</td>
+        <td style="white-space:nowrap;display:flex;gap:4px;flex-wrap:wrap;">
+          ${deliverBtn}
+          ${delBtn}
+        </td>
+      </tr>`;
+    }).join('');
   }
 
-  // ===== SAVE PRODUCT =====
+  // ===== COMBINED REFRESH =====
+  function refreshAll() {
+    renderProductsTable();
+    renderOrdersTable();
+    renderUsersTable();
+  }
+
+  // ===== PRODUCTS CRUD =====
   function saveProduct(e) {
     e.preventDefault();
     const id    = document.getElementById('product-id').value;
@@ -404,174 +466,160 @@
     const image = document.getElementById('product-image').value || 'Image/KSD.svg';
 
     if (!name) { alert('ກະລຸນາຕື່ມຊື່ສິນຄ້າ'); return; }
-    if (Number.isNaN(price) || price < 0) { alert('ລາຄາບໍ່ຖືກຕ້ອງ'); return; }
+    if (isNaN(price) || price < 0) { alert('ລາຄາບໍ່ຖືກຕ້ອງ'); return; }
 
-    const productData = { name, price, desc, image };
+    let products = getProducts();
     if (id) {
       const idx = products.findIndex(p => String(p.id) === String(id));
-      if (idx >= 0) products[idx] = normalizeProduct({ id: products[idx].id, ...productData });
-      alert('ແກ້ໄຂສິນຄ້າສຳເລັດ!');
+      if (idx >= 0) products[idx] = normProd({ id: products[idx].id, name, price, desc, image });
+      alert('✅ ແກ້ໄຂສິນຄ້າສຳເລັດ!');
     } else {
-      const numericIds = products.map(p => Number(p.id)).filter(n => !Number.isNaN(n));
-      const newId = numericIds.length ? Math.max(...numericIds) + 1 : Date.now();
-      const created = normalizeProduct({ id: newId, ...productData });
+      const maxId = products.reduce((m, p) => Math.max(m, Number(p.id) || 0), 0);
+      const created = normProd({ id: maxId + 1, name, price, desc, image });
       if (created) products.push(created);
-      alert('ເພີ່ມສິນຄ້າໃໝ່ຮຽບຮ້ອຍ!');
+      alert('✅ ເພີ່ມສິນຄ້າໃໝ່ຮຽບຮ້ອຍ!');
     }
-
-    products = products.map(normalizeProduct).filter(Boolean);
+    products = products.map(normProd).filter(Boolean);
     localStorage.setItem('backend_products', JSON.stringify(products));
-    syncProductsToFirebase();
+    // sync to Firebase
+    if (typeof window._adminSyncProducts === 'function') window._adminSyncProducts(products);
     clearProductForm();
-    loadAdminData();
+    renderProductsTable();
   }
 
-  // ===== EDIT PRODUCT =====
   function editProduct(id) {
-    const p = products.find(prod => String(prod.id) === String(id));
+    const p = getProducts().find(x => String(x.id) === String(id));
     if (!p) return;
     document.getElementById('product-id').value    = p.id;
     document.getElementById('product-name').value  = p.name;
     document.getElementById('product-price').value = p.price;
     document.getElementById('product-desc').value  = p.desc;
     document.getElementById('product-image').value = p.image;
-    document.getElementById('form-title').innerText = '✏️ ແກ້ໄຂສິນຄ້າ';
-
+    document.getElementById('form-title').textContent = '✏️ ແກ້ໄຂສິນຄ້າ';
     const prev = document.getElementById('image-preview');
-    prev.src = p.image;
-    prev.style.display = 'block';
-
-    document.getElementById('product-form').scrollIntoView({ behavior: 'smooth' });
+    prev.src = p.image; prev.style.display = 'block';
+    // switch to products section
+    document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('#adminNav button').forEach(b => b.classList.remove('active'));
+    document.getElementById('section-products').classList.add('active');
+    document.querySelector('#adminNav button[data-section="products"]').classList.add('active');
+    document.getElementById('productForm').scrollIntoView({ behavior: 'smooth' });
   }
 
-  // ===== DELETE PRODUCT =====
   function deleteProduct(id) {
     if (!confirm('ຢືນຢັນລຶບສິນຄ້ານີ້?')) return;
-    products = products.filter(p => String(p.id) !== String(id));
-    products = products.map(normalizeProduct).filter(Boolean);
+    let products = getProducts().filter(p => String(p.id) !== String(id));
     localStorage.setItem('backend_products', JSON.stringify(products));
-    syncProductsToFirebase();
-    loadAdminData();
+    if (typeof window._adminSyncProducts === 'function') window._adminSyncProducts(products);
+    renderProductsTable();
   }
 
-  // ===== DELETE ORDER =====
-  function deleteOrder(index) {
-    if (!confirm('ລຶບອໍເດີ້ນີ້?')) return;
-    orders.splice(index, 1);
-    localStorage.setItem('backend_orders', JSON.stringify(orders));
-    loadAdminData();
-  }
-
-  // ===== CLEAR FORM =====
   function clearProductForm() {
     document.getElementById('product-id').value = '';
-    document.getElementById('product-form').reset();
+    document.getElementById('productForm').reset();
     document.getElementById('product-image').value = '';
-    document.getElementById('form-title').innerText = '➕ ເພີ່ມສິນຄ້າໃໝ່';
+    document.getElementById('form-title').textContent = '➕ ເພີ່ມສິນຄ້າໃໝ່';
     const prev = document.getElementById('image-preview');
-    prev.src = '';
-    prev.style.display = 'none';
+    prev.src = ''; prev.style.display = 'none';
   }
 
-  // ===== PREVIEW IMAGE =====
-  function previewUploadedImage() {
+  function previewProductImage() {
     const file = document.getElementById('product-image-file').files[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = e => {
+    const r = new FileReader();
+    r.onload = e => {
       const prev = document.getElementById('image-preview');
-      prev.src = e.target.result;
-      prev.style.display = 'block';
+      prev.src = e.target.result; prev.style.display = 'block';
       document.getElementById('product-image').value = e.target.result;
     };
-    reader.readAsDataURL(file);
+    r.readAsDataURL(file);
   }
 
-  // ===== FIREBASE SYNC =====
-  function syncProductsToFirebase() {
-    if (typeof window._ksdSyncFirebase === 'function') {
-      window._ksdSyncFirebase(products);
-    }
+  // ===== ORDERS =====
+  function localDeleteOrder(i) {
+    if (!confirm('ລຶບອໍເດີ້ນີ້?')) return;
+    const orders = JSON.parse(localStorage.getItem('backend_orders') || '[]');
+    orders.splice(i, 1);
+    localStorage.setItem('backend_orders', JSON.stringify(orders));
+    renderOrdersTable();
   }
 
-  // ===== EDIT USER =====
-  function openEditUserModal(phone) {
-    const users = JSON.parse(localStorage.getItem('ksd_users')) || [];
-    const u = users.find(u => String(u.phone).replace(/\s/g,'') === String(phone).replace(/\s/g,''));
+  // ===== USERS CRUD =====
+  function openEditUser(phone) {
+    const users = JSON.parse(localStorage.getItem('ksd_users') || '[]');
+    const u = users.find(x => String(x.phone || '').replace(/\s/g,'') === String(phone).replace(/\s/g,''));
     if (!u) return;
-    document.getElementById('editUserPhone').value    = u.phone;
+    document.getElementById('editUserOldPhone').value = u.phone || '';
     document.getElementById('editUserName').value     = u.name || '';
-    document.getElementById('editUserNewPhone').value = u.phone || '';
+    document.getElementById('editUserPhone').value    = u.phone || '';
     document.getElementById('editUserAge').value      = u.age || '';
     document.getElementById('editUserAddress').value  = u.address || '';
-    document.getElementById('editUserPassword').value = '';
-    document.getElementById('editUserModal').style.display = 'flex';
+    document.getElementById('editUserPass').value     = '';
+    document.getElementById('editUserModal').classList.add('open');
   }
 
   function closeEditUserModal() {
-    document.getElementById('editUserModal').style.display = 'none';
+    document.getElementById('editUserModal').classList.remove('open');
   }
 
   function saveEditUser() {
-    const oldPhone = String(document.getElementById('editUserPhone').value).replace(/\s/g,'');
+    const oldPhone = String(document.getElementById('editUserOldPhone').value).replace(/\s/g,'');
     const newName  = document.getElementById('editUserName').value.trim();
-    const newPhone = String(document.getElementById('editUserNewPhone').value).replace(/\s/g,'');
+    const newPhone = String(document.getElementById('editUserPhone').value).replace(/\s/g,'');
     const newAge   = document.getElementById('editUserAge').value.trim();
     const newAddr  = document.getElementById('editUserAddress').value.trim();
-    const newPass  = document.getElementById('editUserPassword').value;
+    const newPass  = document.getElementById('editUserPass').value;
 
     if (!newName) { alert('ກະລຸນາຕື່ມຊື່'); return; }
     if (!newPhone) { alert('ກະລຸນາຕື່ມເບີໂທ'); return; }
 
-    let users = JSON.parse(localStorage.getItem('ksd_users')) || [];
-    const idx = users.findIndex(u => String(u.phone).replace(/\s/g,'') === oldPhone);
-    if (idx < 0) { alert('ບໍ່ພົບຜູ້ໃຊ້ນີ້'); return; }
-
-    // ກວດສອບ phone ຊ້ຳ (ຍົກເວັ້ນຕົນເອງ)
-    if (newPhone !== oldPhone && users.some(u => String(u.phone).replace(/\s/g,'') === newPhone)) {
-      alert('ເບີໂທນີ້ຖືກໃຊ້ງານແລ້ວ'); return;
+    let users = JSON.parse(localStorage.getItem('ksd_users') || '[]');
+    const idx = users.findIndex(u => String(u.phone || '').replace(/\s/g,'') === oldPhone);
+    if (idx < 0) { alert('ບໍ່ພົບຜູ້ໃຊ້'); return; }
+    if (newPhone !== oldPhone && users.some(u => String(u.phone||'').replace(/\s/g,'') === newPhone)) {
+      alert('ເບີໂທນີ້ຖືກໃຊ້ແລ້ວ'); return;
     }
-
-    users[idx] = {
-      ...users[idx],
-      name: newName,
-      phone: newPhone,
-      age: newAge,
-      address: newAddr,
-      ...(newPass ? { password: newPass } : {}),
-    };
-
+    users[idx] = { ...users[idx], name: newName, phone: newPhone, age: newAge, address: newAddr, ...(newPass ? { password: newPass } : {}) };
     localStorage.setItem('ksd_users', JSON.stringify(users));
-    // Sync to Firebase
-    if (typeof syncUsersToFirebase === 'function') syncUsersToFirebase(users);
-
+    if (typeof window._adminSyncUsers === 'function') window._adminSyncUsers(users);
     closeEditUserModal();
-    loadAdminData();
+    renderUsersTable();
     alert('✅ ແກ້ໄຂຂໍ້ມູນຜູ້ໃຊ້ຮຽບຮ້ອຍ!');
   }
 
-  // ===== DELETE USER =====
   function deleteUser(phone) {
-    const normPhone = String(phone).replace(/\s/g,'');
-    if (ADMIN_PHONES.includes(normPhone)) { alert('⛔ ບໍ່ສາມາດລຶບ Admin ໄດ້'); return; }
+    const p = String(phone).replace(/\s/g,'');
+    if (ADMIN_PHONES.includes(p)) { alert('⛔ ບໍ່ສາມາດລຶບ Admin ໄດ້'); return; }
     if (!confirm('ຢືນຢັນລຶບຜູ້ໃຊ້ນີ້?')) return;
-    let users = JSON.parse(localStorage.getItem('ksd_users')) || [];
-    users = users.filter(u => String(u.phone).replace(/\s/g,'') !== normPhone);
+    let users = JSON.parse(localStorage.getItem('ksd_users') || '[]');
+    users = users.filter(u => String(u.phone || '').replace(/\s/g,'') !== p);
     localStorage.setItem('ksd_users', JSON.stringify(users));
-    if (typeof syncUsersToFirebase === 'function') syncUsersToFirebase(users);
-    loadAdminData();
+    if (typeof window._adminSyncUsers === 'function') window._adminSyncUsers(users);
+    renderUsersTable();
     alert('🗑 ລຶບຜູ້ໃຊ້ຮຽບຮ້ອຍ');
   }
 
-  // Init
-  loadAdminData();
+  // ===== SLIP MODAL =====
+  function openSlipByKey(key) {
+    const data = window._fbOrdersData;
+    if (!data || !data[key] || !data[key].slipImage) return;
+    document.getElementById('slipModalImg').src = data[key].slipImage;
+    document.getElementById('slipModal').classList.add('open');
+  }
+  function closeSlipModal() {
+    document.getElementById('slipModal').classList.remove('open');
+  }
+
+  // ===== INIT =====
+  document.addEventListener('DOMContentLoaded', refreshAll);
 </script>
 
+<!-- Firebase module script -->
 <script type="module">
   import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
-  import { getDatabase, ref, set, remove, onValue, update } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js';
+  import { getDatabase, ref, set, remove, update, onValue } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js';
 
-  const firebaseConfig = {
+  const cfg = {
     apiKey: 'AIzaSyB_JcmHbO_kOy9v3rvstiqDoIgBYndRfZI',
     authDomain: 'ksd-kingsada.firebaseapp.com',
     databaseURL: 'https://ksd-kingsada-default-rtdb.firebaseio.com',
@@ -580,145 +628,107 @@
     messagingSenderId: '984977062231',
     appId: '1:984977062231:web:39ebfc780ebc875dec2612',
   };
+  const app = getApps().length ? getApps()[0] : initializeApp(cfg);
+  const db  = getDatabase(app);
 
-  const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
-  const db = getDatabase(app);
-
-  // Expose user sync for inline scripts
-  window.syncUsersToFirebase = async (users) => {
-    try {
-      const data = {};
-      users.forEach(u => { if (u.phone) data[String(u.phone).replace(/\s/g,'')] = u; });
-      await set(ref(db, 'users'), data);
-    } catch(e) { console.warn('User sync failed:', e.message); }
-  };
-
-  // ===== SYNC PRODUCTS =====
-  window._ksdSyncFirebase = async (list) => {
+  // ---- expose sync helpers ----
+  window._adminSyncProducts = async (list) => {
     const data = {};
-    list.forEach(p => {
-      data[String(p.id)] = { name: p.name, price: p.price, desc: p.desc, image: p.image };
-    });
+    list.forEach(p => { data[String(p.id)] = { name: p.name, price: p.price, desc: p.desc, image: p.image }; });
     await set(ref(db, 'products'), data);
   };
+  // keep old name working (ksd-common.js uses this)
+  window._ksdSyncFirebase = window._adminSyncProducts;
 
-  // ===== REAL-TIME ORDERS =====
-  function escH(s) { return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-
-  onValue(ref(db, 'orders'), (snapshot) => {
-    const data = snapshot.val();
-    const orderList = document.getElementById('admin-order-list');
-    const dashCount = document.getElementById('dash-order-count');
-    if (!orderList) return;
-
-    orderList.innerHTML = '';
-
-    if (!data) {
-      orderList.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#64748b;padding:20px;">ຍັງບໍ່ມີອໍເດີ້</td></tr>';
-      if (dashCount) dashCount.innerText = 0;
-      return;
-    }
-
-    const entries = Object.entries(data).reverse(); // ໃໝ່ສຸດຢູ່ເທິງ
-    if (dashCount) dashCount.innerText = entries.length;
-
-    // sync to localStorage for history.html
-    const arr = entries.map(([k,v]) => ({...v, _fbKey: k}));
-    localStorage.setItem('backend_orders', JSON.stringify(arr));
-
-    entries.forEach(([key, order]) => {
-      const isDelivered = order.status === 'delivered';
-      const statusBadge = isDelivered
-        ? '<span class="badge-delivered">✅ ສົ່ງແລ້ວ</span>'
-        : '<span class="badge-pending">⏳ ລໍຖ້າ</span>';
-
-      const slipBtn = order.slipImage
-        ? `<button class="btn btn-blue" onclick="openSlipModal('${key}')" style="padding:5px 10px;font-size:12px;">👁 ໃບບິນ</button>`
-        : '<span style="color:#94a3b8;font-size:12px;">—</span>';
-
-      const deliveredBtn = isDelivered
-        ? `<button class="btn btn-gray" style="padding:5px 10px;font-size:12px;" disabled>✅ ສົ່ງແລ້ວ</button>`
-        : `<button class="btn" style="padding:5px 10px;font-size:12px;background:#16a34a;color:white;" onclick="markDelivered('${key}')">📦 ສົ່ງແລ້ວ</button>`;
-
-      orderList.innerHTML += `
-        <tr>
-          <td style="white-space:nowrap;">${escH(order.date||'—')}</td>
-          <td><strong>${escH(order.customer||'—')}</strong></td>
-          <td style="white-space:nowrap;">${escH(order.phone||'—')}</td>
-          <td style="max-width:160px;word-break:break-word;">${escH(order.address||'—')}</td>
-          <td style="max-width:200px;word-break:break-word;">${escH(order.items||'—')}</td>
-          <td style="color:#ef4444;font-weight:bold;white-space:nowrap;">${Number(order.total||0).toLocaleString()} ກີບ</td>
-          <td>${statusBadge}</td>
-          <td>${slipBtn}</td>
-          <td style="white-space:nowrap;display:flex;gap:4px;flex-wrap:wrap;">
-            ${deliveredBtn}
-            <button class="btn btn-red" onclick="deleteFirebaseOrder('${key}')" style="padding:5px 10px;font-size:12px;">🗑 ລຶບ</button>
-          </td>
-        </tr>`;
-    });
-
-    // store slip data for modal
-    window._fbOrdersData = data;
-  });
-
-  // ===== MARK DELIVERED =====
-  window.markDelivered = async (key) => {
-    if (!confirm('ຢືນຢັນວ່າໄດ້ຈັດສົ່ງອໍເດີ້ນີ້ແລ້ວ?')) return;
-    await update(ref(db, 'orders/' + key), { status: 'delivered' });
+  window._adminSyncUsers = async (users) => {
+    const data = {};
+    users.forEach(u => { if (u.phone) data[String(u.phone).replace(/\s/g,'')] = u; });
+    await set(ref(db, 'users'), data);
   };
 
-  // ===== DELETE ORDER =====
-  window.deleteFirebaseOrder = async (key) => {
+  window.fbDeleteOrder = async (key) => {
     if (!confirm('ລຶບອໍເດີ້ນີ້?')) return;
     await remove(ref(db, 'orders/' + key));
   };
-  // keep old deleteOrder working (called from inline JS)
-  window.deleteOrder = window.deleteFirebaseOrder;
 
-  // ===== SLIP MODAL =====
-  window.openSlipModal = (key) => {
-    const data = window._fbOrdersData;
-    if (!data || !data[key]?.slipImage) return;
-    document.getElementById('slipModalImg').src = data[key].slipImage;
-    document.getElementById('slipModal').classList.add('open');
-  };
-  window.closeSlipModal = () => {
-    document.getElementById('slipModal').classList.remove('open');
+  window.fbMarkDelivered = async (key) => {
+    if (!confirm('ຢືນຢັນໄດ້ຈັດສົ່ງແລ້ວ?')) return;
+    await update(ref(db, 'orders/' + key), { status: 'delivered' });
   };
 
-  // ===== REAL-TIME USERS =====
-  onValue(ref(db, 'users'), (snapshot) => {
-    const data = snapshot.val();
+  // ---- real-time listeners ----
+  // PRODUCTS
+  onValue(ref(db, 'products'), snap => {
+    const data = snap.val();
+    if (!data || !Object.keys(data).length) {
+      // Firebase ຫວ່າງ → push localStorage ໄປ Firebase ແທນ
+      const local = JSON.parse(localStorage.getItem('backend_products') || '[]');
+      if (local.length) window._adminSyncProducts(local);
+      return;
+    }
+    const list = Object.entries(data).map(([k, v]) => ({
+      id: isNaN(Number(k)) ? k : Number(k),
+      name: v.name || '', price: Number(v.price) || 0,
+      desc: v.desc || '', image: v.image || 'Image/KSD.svg',
+    })).filter(p => p.name);
+    if (!list.length) return;
+    localStorage.setItem('backend_products', JSON.stringify(list));
+    if (typeof renderProductsTable === 'function') renderProductsTable();
+  });
+
+  // ORDERS
+  onValue(ref(db, 'orders'), snap => {
+    const data = snap.val();
+    const tbody = document.getElementById('admin-order-list');
+    const dashCount = document.getElementById('dash-order-count');
+
+    if (!data) {
+      if (tbody) tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#94a3b8;padding:20px;">ຍັງບໍ່ມີອໍເດີ້</td></tr>';
+      if (dashCount) dashCount.textContent = '0';
+      localStorage.setItem('backend_orders', '[]');
+      return;
+    }
+
+    const entries = Object.entries(data).reverse();
+    if (dashCount) dashCount.textContent = entries.length;
+    const arr = entries.map(([k, v]) => ({ ...v, _fbKey: k }));
+    localStorage.setItem('backend_orders', JSON.stringify(arr));
+    window._fbOrdersData = data;
+
+    if (!tbody) return;
+    function esc2(s) { return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+    tbody.innerHTML = entries.map(([key, o]) => {
+      const isDelivered = o.status === 'delivered';
+      const badge = isDelivered ? '<span class="badge-delivered">✅ ສົ່ງແລ້ວ</span>' : '<span class="badge-pending">⏳ ລໍຖ້າ</span>';
+      const deliverBtn = !isDelivered ? `<button class="btn btn-green" onclick="fbMarkDelivered('${esc2(key)}')" style="padding:4px 9px;font-size:12px;">📦 ສົ່ງແລ້ວ</button>` : `<button class="btn btn-gray" disabled style="padding:4px 9px;font-size:12px;">✅ ສົ່ງແລ້ວ</button>`;
+      const slipBtn = o.slipImage ? `<button class="btn btn-blue" onclick="openSlipByKey('${esc2(key)}')" style="padding:4px 9px;font-size:12px;">👁 ໃບບິນ</button>` : '<span style="color:#94a3b8;font-size:12px;">—</span>';
+      return `
+      <tr>
+        <td style="white-space:nowrap;">${esc2(o.date||'—')}</td>
+        <td><strong>${esc2(o.customer||'—')}</strong></td>
+        <td style="white-space:nowrap;">${esc2(o.phone||'—')}</td>
+        <td style="max-width:140px;word-break:break-word;">${esc2(o.address||'—')}</td>
+        <td style="max-width:180px;word-break:break-word;">${esc2(o.items||'—')}</td>
+        <td style="color:#ef4444;font-weight:bold;white-space:nowrap;">${Number(o.total||0).toLocaleString()} ກີບ</td>
+        <td>${badge}</td>
+        <td>${slipBtn}</td>
+        <td style="white-space:nowrap;display:flex;gap:4px;flex-wrap:wrap;">
+          ${deliverBtn}
+          <button class="btn btn-red" onclick="fbDeleteOrder('${esc2(key)}')" style="padding:4px 9px;font-size:12px;">🗑 ລຶບ</button>
+        </td>
+      </tr>`;
+    }).join('');
+  });
+
+  // USERS
+  onValue(ref(db, 'users'), snap => {
+    const data = snap.val();
     if (!data) return;
     const users = Array.isArray(data) ? data : Object.values(data);
     localStorage.setItem('ksd_users', JSON.stringify(users));
-    const dashCount = document.getElementById('dash-user-count');
-    if (dashCount) dashCount.innerText = users.length;
-    // re-render users table
-    const userList = document.getElementById('admin-user-list');
-    if (!userList) return;
-    const ADMIN_P = ['02054835745'];
-    userList.innerHTML = users.length === 0
-      ? '<tr><td colspan="7" style="text-align:center;color:#64748b;padding:20px;">ຍັງບໍ່ມີຜູ້ໃຊ້</td></tr>'
-      : users.map(u => {
-          const isAdm = ADMIN_P.includes(String(u.phone||'').replace(/\s/g,''));
-          const escapedPhone = escH(String(u.phone||'').replace(/'/g,"\\'"));
-          return `
-          <tr>
-            <td><strong>${escH(u.name)}</strong></td>
-            <td>${escH(u.phone)}</td>
-            <td>${escH(u.age||'—')}</td>
-            <td style="max-width:160px;word-break:break-word;">${escH(u.address||'—')}</td>
-            <td>${isAdm ? '👑 Admin' : '👤 Member'}</td>
-            <td style="white-space:nowrap;">${u.registeredAt ? new Date(u.registeredAt).toLocaleString('lo-LA') : '—'}</td>
-            <td style="white-space:nowrap;">
-              <button class="btn btn-yellow" onclick="openEditUserModal('${escapedPhone}')" style="padding:5px 10px;font-size:13px;">✏️ ແກ້ໄຂ</button>
-              ${isAdm ? '' : `<button class="btn btn-red" onclick="deleteUser('${escapedPhone}')" style="padding:5px 10px;font-size:13px;margin-left:4px;">🗑 ລຶບ</button>`}
-            </td>
-          </tr>`;
-        }).join('');
+    if (typeof renderUsersTable === 'function') renderUsersTable();
   });
-
 </script>
+<script src="ksd-common.js"></script>
 </body>
 </html>
