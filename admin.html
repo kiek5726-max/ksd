@@ -660,21 +660,21 @@
   // PRODUCTS
   onValue(ref(db, '/'), (snapshot) => {
     const data = snapshot.val();
-    if (!data || !Object.keys(data).length) {
-      // Firebase ຫວ່າງ → push localStorage ໄປ Firebase ແທນ
-      const local = JSON.parse(localStorage.getItem('backend_products') || '[]');
-      if (local.length) window._adminSyncProducts(local);
-      return;
+    if (data) {
+        // ປ່ຽນຂໍ້ມູນໃຫ້ເປັນ List ເພື່ອສະແດງໃນຕາຕະລາງ
+        // (ອັນນີ້ແມ່ນ Logic ທີ່ມີຢູ່ແລ້ວຂອງເຈົ້າ)
+        const list = Object.entries(data)
+            .filter(([k, v]) => typeof v === 'object' && v.name)
+            .map(([k, v]) => ({ id: k, ...v }));
+
+        localStorage.setItem('backend_products', JSON.stringify(list));
+
+        // ຖ້າຢູ່ໜ້າ Admin, ໃຫ້ມັນສັ່ງ Render ໃໝ່ທັນທີ
+        if (typeof renderProductsTable === 'function') {
+            renderProductsTable();
+        }
     }
-    const list = Object.entries(data).map(([k, v]) => ({
-      id: isNaN(Number(k)) ? k : Number(k),
-      name: v.name || '', price: Number(v.price) || 0,
-      desc: v.desc || '', image: v.image || 'Image/KSD.svg',
-    })).filter(p => p.name);
-    if (!list.length) return;
-    localStorage.setItem('backend_products', JSON.stringify(list));
-    if (typeof renderProductsTable === 'function') renderProductsTable();
-  });
+});
 
   // ORDERS
   onValue(ref(db, 'orders'), snap => {
