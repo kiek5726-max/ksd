@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ຂໍ້ມູນສ່ວນຕົວ - KSD</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@300;400;500;700&display=swap">
+  <style>
+    body { background: #f0f2f5; display: flex; justify-content: center; padding: 40px 20px; min-height: 100vh; }
+    .profile-card {
+      background: white;
+      padding: 35px;
+      border-radius: 20px;
+      width: 100%; max-width: 440px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      height: fit-content;
+    }
+    h2 { text-align: center; color: #004d17; margin-bottom: 25px; }
+    .input-group { margin-bottom: 16px; }
+    .input-group label { display: block; margin-bottom: 6px; font-weight: bold; font-size: 14px; color: #334155; }
+    .input-group input, .input-group select {
+      width: 100%; padding: 11px 14px;
+      border: 1.5px solid #ddd; border-radius: 10px;
+      box-sizing: border-box; font-size: 15px;
+      font-family: 'Noto Sans Lao', sans-serif;
+      transition: border 0.2s;
+    }
+    .input-group input:focus, .input-group select:focus {
+      border-color: #006411; outline: none;
+    }
+    #imagePreview {
+      display: none;
+      width: 120px; height: 120px;
+      border-radius: 12px; object-fit: cover;
+      border: 2px solid #ddd;
+      margin-top: 10px;
+    }
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 12px;
+      color: #64748b;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .back-link:hover { color: #006411; }
+  </style>
+</head>
+<body data-firebase="false" data-profile-page="true">
+  <div class="profile-card">
+    <h2>ຕັ້ງຄ່າໂປຣໄຟລ໌</h2>
+
+    <div class="input-group">
+      <label>ຮູບໂປຣໄຟລ໌</label>
+      <input type="file" id="imageInput" accept="image/*" onchange="previewImage(event)">
+      <img id="imagePreview" src="#" alt="Preview">
+    </div>
+
+    <div class="input-group">
+      <label>ຊື່ ແລະ ນາມສະກຸນ</label>
+      <input type="text" id="nameInput" placeholder="ຊື່ຂອງທ່ານ...">
+    </div>
+    <div class="input-group">
+      <label>ອາຍຸ</label>
+      <input type="number" id="ageInput" placeholder="ອາຍຸ..." min="1" max="120">
+    </div>
+    <div class="input-group">
+      <label>ເບີໂທ</label>
+      <input type="tel" id="phoneInput" placeholder="020 XXXXXXXX">
+    </div>
+    <div class="input-group">
+      <label>ທີ່ຢູ່</label>
+      <input type="text" id="addressInput" placeholder="ບ້ານ, ເມືອງ, ແຂວງ...">
+    </div>
+    <div class="input-group">
+      <label>ຍົດ</label>
+      <select id="roleInput">
+        <option value="member">👤 ສະມາຊິກ (Member)</option>
+      </select>
+    </div>
+
+    <button class="save-btn" style="width:100%; margin-top:5px;" onclick="saveAllData()">
+      ບັນທຶກຂໍ້ມູນ
+    </button>
+    <a href="index.html" class="back-link">← ກັບໄປໜ້າຫຼັກ</a>
+  </div>
+
+  <script>
+    // ===== PREVIEW IMAGE =====
+    function previewImage(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = document.getElementById('imagePreview');
+        img.src = e.target.result;
+        img.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // ===== SAVE ALL DATA =====
+    function saveAllData() {
+      const btn = document.querySelector('.save-btn');
+      const nameVal = document.getElementById('nameInput').value.trim();
+      if (!nameVal) {
+        alert('ກະລຸນາຕື່ມຊື່ຂອງທ່ານ');
+        return;
+      }
+
+      btn.innerText = 'ກຳລັງບັນທຶກ...';
+      btn.disabled = true;
+
+      localStorage.setItem('user_name', nameVal);
+      localStorage.setItem('user_age', document.getElementById('ageInput').value);
+      localStorage.setItem('user_phone', document.getElementById('phoneInput').value);
+      localStorage.setItem('user_address', document.getElementById('addressInput').value);
+
+      updateUserInStore({
+        name: nameVal,
+        age: document.getElementById('ageInput').value,
+        phone: document.getElementById('phoneInput').value,
+        address: document.getElementById('addressInput').value,
+      });
+
+      function finishSave() {
+        window.location.href = 'index.html';
+      }
+
+      const file = document.getElementById('imageInput').files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          localStorage.setItem('user_image', e.target.result);
+          updateUserInStore({ image: e.target.result });
+          finishSave();
+        };
+        reader.onerror = function() {
+          btn.disabled = false;
+          btn.innerText = 'ບັນທຶກຂໍ້ມູນ';
+          alert('ອັບໂຫຼດຮູບບໍ່ສຳເລັດ');
+        };
+        reader.readAsDataURL(file);
+      } else {
+        setTimeout(finishSave, 400);
+      }
+    }
+
+    // ===== LOAD SAVED DATA =====
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('nameInput').value    = localStorage.getItem('user_name')    || '';
+      document.getElementById('ageInput').value     = localStorage.getItem('user_age')     || '';
+      document.getElementById('phoneInput').value   = localStorage.getItem('user_phone')   || '';
+      document.getElementById('addressInput').value = localStorage.getItem('user_address') || '';
+
+      const savedImg = localStorage.getItem('user_image');
+      if (savedImg) {
+        const img = document.getElementById('imagePreview');
+        img.src = savedImg;
+        img.style.display = 'block';
+      }
+
+      const roleSelect = document.getElementById('roleInput');
+      const admin = typeof isAdmin === 'function' && isAdmin();
+      roleSelect.innerHTML = admin
+        ? '<option value="admin">👑 Admin</option>'
+        : '<option value="member">👤 ສະມາຊິກ (Member)</option>';
+    });
+  </script>
+  <script src="ksd-common.js"></script>
+</body>
+</html>

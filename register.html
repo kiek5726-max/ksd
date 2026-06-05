@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ສະໝັກສະມາຊິກ - KSD</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@300;400;500;700&display=swap">
+</head>
+<body class="auth-page" data-firebase="false" data-register-page="true">
+
+  <div class="auth-card">
+    <div class="auth-logo">
+      <img src="Image/KSD.svg" alt="KSD" onerror="this.style.display='none'">
+      <h2>📝 ສະໝັກສະມາຊິກ</h2>
+      <p class="auth-sub">ສ້າງບັນຊີເພື່ອສັ່ງຊື້ສິນຄ້າ KSD</p>
+    </div>
+
+    <form id="registerForm" onsubmit="handleRegister(event)">
+      <div class="auth-input-group">
+        <label for="regName">ຊື່ ແລະ ນາມສະກຸນ</label>
+        <input type="text" id="regName" required placeholder="ຊື່ຂອງທ່ານ...">
+      </div>
+      <div class="auth-input-group">
+        <label for="regPhone">ເບີໂທ</label>
+        <input type="tel" id="regPhone" required placeholder="020 XXXXXXXX">
+      </div>
+      <div class="auth-input-group">
+        <label for="regPass">ລະຫັດຜ່ານ</label>
+        <input type="password" id="regPass" required minlength="4" placeholder="ຢ່າງໜ້ອຍ 4 ຕົວອັກສອນ">
+      </div>
+      <div class="auth-input-group">
+        <label for="regPassConfirm">ຢືນຢັນລະຫັດຜ່ານ</label>
+        <input type="password" id="regPassConfirm" required placeholder="ພິມລະຫັດຜ່ານອີກຄັ້ງ">
+      </div>
+      <button type="submit" class="auth-btn auth-btn-green">ສະໝັກສະມາຊິກ</button>
+    </form>
+
+    <div class="auth-links">
+      <a href="login.html">ມີບັນຊີແລ້ວ? <strong>ເຂົ້າສູ່ລະບົບ</strong></a>
+      <a href="index.html">← ກັບໄປໜ້າຫຼັກ</a>
+    </div>
+  </div>
+
+  <script src="ksd-common.js"></script>
+  <script>
+    function handleRegister(e) {
+      e.preventDefault();
+      const name = document.getElementById('regName').value.trim();
+      const phone = document.getElementById('regPhone').value.trim();
+      const pass = document.getElementById('regPass').value;
+      const confirm = document.getElementById('regPassConfirm').value;
+
+      if (!name) { alert('ກະລຸນາຕື່ມຊື່'); return; }
+      if (pass !== confirm) { alert('ລະຫັດຜ່ານບໍ່ກົງກັນ'); return; }
+
+      const result = registerUser({ name, phone, password: pass });
+      if (result.ok) {
+        alert('🎉 ສະໝັກສະມາຊິກສຳເລັດ!');
+        window.location.href = 'index.html';
+      } else {
+        alert('❌ ' + result.msg);
+      }
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ກະຕ່າສິນຄ້າ - KSD ກິ່ງສະດາ</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@300;400;500;700&display=swap">
+  <style>
+    body { background-color: #0f172a; }
+    .cart-header {
+      text-align: center;
+      padding: 30px;
+      color: white;
+    }
+    .cart-header h2 { font-size: 26px; }
+    .cart-header p { color: #94a3b8; margin-top: 6px; }
+    .cart-header a { color: #38bdf8; text-decoration: none; display: inline-block; margin-top: 12px; }
+    .cart-header a:hover { text-decoration: underline; }
+
+    .cart-page-container {
+      max-width: 1200px;
+      margin: 0 auto 60px;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 30px;
+    }
+    .cart-table-section {
+      background-color: #1e293b;
+      padding: 25px;
+      border-radius: 12px;
+      color: white;
+    }
+    .cart-table-section h3 { margin-bottom: 15px; color: #e2e8f0; }
+    .cart-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .cart-table th, .cart-table td {
+      padding: 14px 12px;
+      text-align: left;
+      border-bottom: 1px solid #334155;
+      vertical-align: middle;
+    }
+    .cart-table th { color: #4ade80; font-weight: 600; }
+    .cart-img {
+      width: 65px; height: 65px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    .qty-control { display: flex; align-items: center; gap: 8px; }
+    .btn-qty {
+      background-color: #475569;
+      color: white; border: none;
+      padding: 4px 10px; cursor: pointer;
+      border-radius: 4px; font-size: 16px;
+      transition: background 0.2s;
+    }
+    .btn-qty:hover { background-color: #64748b; }
+    .btn-del {
+      background: none; border: none;
+      color: #ff4757; cursor: pointer;
+      font-size: 20px; padding: 4px;
+    }
+    .btn-del:hover { color: #ff6b81; }
+
+    .checkout-section {
+      background-color: #0f172a;
+      padding: 25px;
+      border-radius: 12px;
+      color: white;
+      border: 1px solid #334155;
+      height: fit-content;
+    }
+    .checkout-section h3 { color: #e2e8f0; margin-bottom: 15px; }
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 18px;
+      margin-bottom: 20px;
+      padding: 12px 0;
+      border-top: 1px solid #334155;
+    }
+    .total-amount { color: #2ed573; font-weight: bold; font-size: 22px; }
+
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; margin-bottom: 5px; font-size: 14px; color: #cbd5e1; }
+    .form-group input, .form-group textarea {
+      width: 100%; padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #475569;
+      background-color: #1e293b;
+      color: white;
+      font-family: 'Noto Sans Lao', sans-serif;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    .form-group textarea { resize: vertical; }
+
+    .btn-confirm {
+      width: 100%;
+      background-color: #2ed573;
+      color: #0f172a;
+      border: none;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 10px;
+      font-family: 'Noto Sans Lao', sans-serif;
+      transition: background 0.2s;
+    }
+    .btn-confirm:hover { background-color: #26af5f; }
+
+    @media (max-width: 768px) {
+      .cart-page-container { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body data-firebase="false">
+
+  <div class="cart-header">
+    <h2>🛒 ກະຕ່າສິນຄ້າຂອງທ່ານ</h2>
+    <p>ກວດສອບລາຍການສິນຄ້າ ແລະ ຕື່ມຂໍ້ມູນເພື່ອສັ່ງຊື້</p>
+    <a href="index.html">⬅️ ກັບໄປໜ້າຫຼັກ</a>
+  </div>
+
+  <div class="cart-page-container">
+
+    <div class="cart-table-section">
+      <h3>ລາຍການສິນຄ້າໃນກະຕ່າ</h3>
+      <table class="cart-table">
+        <thead>
+          <tr>
+            <th>ຮູບ</th>
+            <th>ຊື່ສິນຄ້າ</th>
+            <th>ລາຄາ</th>
+            <th>ຈຳນວນ</th>
+            <th>ລວມ</th>
+            <th>ລຶບ</th>
+          </tr>
+        </thead>
+        <tbody id="cart-page-items"></tbody>
+      </table>
+    </div>
+
+    <div class="checkout-section">
+      <h3>ສະຫຼຸບຍອດເງິນ</h3>
+      <div class="total-row">
+        <span>ຍອດລວມທັງໝົດ:</span>
+        <span id="cart-page-total" class="total-amount">0 ກີບ</span>
+      </div>
+
+      <h3>📋 ຂໍ້ມູນການຈັດສົ່ງ</h3>
+      <form id="orderForm" style="margin-top:15px;" onsubmit="submitOrder(event)">
+        <div class="form-group">
+          <label>ຊື່ ແລະ ນາມສະກຸນ:</label>
+          <input type="text" id="custName" required placeholder="ພິມຊື່ຂອງທ່ານ...">
+        </div>
+        <div class="form-group">
+          <label>ເບີໂທລະສັບ:</label>
+          <input type="tel" id="custPhone" required placeholder="020 XXXXXXXX">
+        </div>
+        <div class="form-group">
+          <label>ທີ່ຢູ່ຈັດສົ່ງ:</label>
+          <textarea id="custAddress" rows="3" required placeholder="ບ້ານ, ເມືອງ, ແຂວງ..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>📎 ແນບໃບບິນການໂອນເງິນ (ຖ້າມີ):</label>
+          <input type="file" id="slipImage" accept="image/*" style="background:#1e293b; color:#cbd5e1; border:1px solid #475569; border-radius:6px; padding:8px; width:100%; box-sizing:border-box;">
+          <div id="slipPreview" style="margin-top:8px; display:none;">
+            <img id="slipPreviewImg" src="" style="max-width:100%; max-height:160px; border-radius:8px; border:1px solid #475569;">
+          </div>
+        </div>
+        <button type="submit" class="btn-confirm">🛍️ ຢືນຢັນການສັ່ງຊື້</button>
+      </form>
+    </div>
+
+  </div>
+
+  <script>
+    function escapeHtml(str) {
+      return String(str ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    // ===== DISPLAY CART =====
+    function displayCartPage() {
+      const tbody  = document.getElementById('cart-page-items');
+      const total  = document.getElementById('cart-page-total');
+      const cart   = JSON.parse(localStorage.getItem('ksd_cart')) || [];
+
+      tbody.innerHTML = '';
+      let sum = 0;
+
+      if (cart.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#94a3b8;padding:30px;">ບໍ່ມີສິນຄ້າໃນກະຕ່າ</td></tr>`;
+        total.innerText = "0 ກີບ";
+        return;
+      }
+
+      cart.forEach(item => {
+        const price = Number(item.price) || 0;
+        const qty   = Number(item.quantity) || 1;
+        const sub   = price * qty;
+        sum += sub;
+
+        tbody.innerHTML += `
+          <tr>
+            <td><img src="${escapeHtml(item.image)}" class="cart-img" onerror="this.src='Image/KSD.svg'"></td>
+            <td><strong>${escapeHtml(item.name)}</strong></td>
+            <td>${price.toLocaleString()} ກີບ</td>
+            <td>
+              <div class="qty-control">
+                <button class="btn-qty" onclick="changeQty('${String(item.id).replace(/'/g, "\\'")}', -1)">−</button>
+                <span>${qty}</span>
+                <button class="btn-qty" onclick="changeQty('${String(item.id).replace(/'/g, "\\'")}', 1)">+</button>
+              </div>
+            </td>
+            <td style="color:#2ed573; font-weight:bold;">${sub.toLocaleString()} ກີບ</td>
+            <td><button class="btn-del" onclick="removeItem('${String(item.id).replace(/'/g, "\\'")}')">🗑️</button></td>
+          </tr>`;
+      });
+
+      total.innerText = sum.toLocaleString() + " ກີບ";
+    }
+
+    // ===== CHANGE QTY =====
+    function changeQty(id, delta) {
+      let cart = JSON.parse(localStorage.getItem('ksd_cart')) || [];
+      const item = cart.find(i => String(i.id) === String(id));
+      if (item) {
+        item.quantity = Number(item.quantity) + delta;
+        if (item.quantity <= 0) cart = cart.filter(i => String(i.id) !== String(id));
+      }
+      localStorage.setItem('ksd_cart', JSON.stringify(cart));
+      displayCartPage();
+      if (typeof updateCartBadge === 'function') updateCartBadge();
+    }
+
+    // ===== REMOVE ITEM =====
+    function removeItem(id) {
+      let cart = JSON.parse(localStorage.getItem('ksd_cart')) || [];
+      cart = cart.filter(i => String(i.id) !== String(id));
+      localStorage.setItem('ksd_cart', JSON.stringify(cart));
+      displayCartPage();
+      if (typeof updateCartBadge === 'function') updateCartBadge();
+    }
+
+    // ===== SLIP PREVIEW =====
+    document.getElementById('slipImage')?.addEventListener('change', function() {
+      const file = this.files[0];
+      if (!file) { document.getElementById('slipPreview').style.display = 'none'; return; }
+      const reader = new FileReader();
+      reader.onload = e => {
+        document.getElementById('slipPreviewImg').src = e.target.result;
+        document.getElementById('slipPreview').style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // ===== SUBMIT ORDER =====
+    async function submitOrder(e) {
+  e.preventDefault();
+  const cart = JSON.parse(localStorage.getItem('ksd_cart')) || [];
+  if (cart.length === 0) return alert('ກະຕ່າຫວ່າງເປົ່າ!');
+
+  const btn = document.querySelector('.btn-confirm');
+  btn.disabled = true;
+  btn.textContent = 'ກຳລັງສົ່ງ...';
+
+  // ອ່ານໃບບິນ slip ຖ້າມີ
+  let slipBase64 = '';
+  const slipFile = document.getElementById('slipImage')?.files[0];
+  if (slipFile) {
+    slipBase64 = await new Promise(resolve => {
+      const r = new FileReader();
+      r.onload = ev => resolve(ev.target.result);
+      r.readAsDataURL(slipFile);
+    });
+  }
+
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('lo-LA') + ' ' + now.toLocaleTimeString('lo-LA', { hour: '2-digit', minute: '2-digit' });
+
+  const orderData = {
+    date: dateStr,
+    customer: document.getElementById('custName').value,
+    phone: String(document.getElementById('custPhone').value).replace(/\s/g, ''),
+    address: document.getElementById('custAddress').value,
+    total: cart.reduce((s, i) => s + (Number(i.price) * Number(i.quantity)), 0),
+    items: cart.map(i => `${i.name} x${i.quantity}`).join(', '),
+    status: 'pending',
+    slipImage: slipBase64,
+  };
+
+  try {
+    const { initializeApp, getApps } = await import('https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js');
+    const { getDatabase, ref, push } = await import('https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js');
+
+    const FIREBASE_CONFIG = {
+      apiKey: 'AIzaSyB_JcmHbO_kOy9v3rvstiqDoIgBYndRfZI',
+      authDomain: 'ksd-kingsada.firebaseapp.com',
+      databaseURL: 'https://ksd-kingsada-default-rtdb.firebaseio.com',
+      projectId: 'ksd-kingsada',
+      storageBucket: 'ksd-kingsada.firebasestorage.app',
+      messagingSenderId: '984977062231',
+      appId: '1:984977062231:web:39ebfc780ebc875dec2612',
+    };
+
+    const app = getApps().length ? getApps()[0] : initializeApp(FIREBASE_CONFIG);
+    const db = getDatabase(app);
+    await push(ref(db, 'orders'), orderData);
+
+    // ບັນທຶກລົງ localStorage ດ້ວຍ (offline fallback)
+    const localOrders = JSON.parse(localStorage.getItem('backend_orders') || '[]');
+    localOrders.push(orderData);
+    localStorage.setItem('backend_orders', JSON.stringify(localOrders));
+
+    localStorage.removeItem('ksd_cart');
+    if (typeof updateCartBadge === 'function') updateCartBadge();
+    alert('✅ ສັ່ງຊື້ສຳເລັດ! ທາງທີມງານຈະຕິດຕໍ່ກັບ \n📞 ' + orderData.phone);
+    window.location.href = 'history.html';
+  } catch (error) {
+    console.error('Firebase error:', error);
+    // fallback: save local only
+    const localOrders = JSON.parse(localStorage.getItem('backend_orders') || '[]');
+    localOrders.push(orderData);
+    localStorage.setItem('backend_orders', JSON.stringify(localOrders));
+    alert('✅ ສັ່ງຊື້ສຳເລັດ (offline mode)');
+    localStorage.removeItem('ksd_cart');
+    window.location.href = 'history.html';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '🛍️ ຢືນຢັນການສັ່ງຊື້';
+  }
+}
+
+    document.addEventListener('DOMContentLoaded', () => {
+      displayCartPage();
+      if (localStorage.getItem('ksd_logged_in') === 'true') {
+        const n = document.getElementById('custName');
+        const p = document.getElementById('custPhone');
+        const a = document.getElementById('custAddress');
+        if (n && !n.value) n.value = localStorage.getItem('user_name') || '';
+        if (p && !p.value) p.value = localStorage.getItem('user_phone') || '';
+        if (a && !a.value) a.value = localStorage.getItem('user_address') || '';
+      }
+    });
+  </script>
+<script>
+    function removeFromCart(index) {
+        console.log("ກຳລັງລົບລາຍການທີ່: ", index);
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        cart.splice(index, 1);
+        localStorage.setItem('cart', JSON.stringify(cart));
+        location.reload(); 
+    }
+</script>
+  <script src="ksd-common.js"></script>
+</body>
+</html>

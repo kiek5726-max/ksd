@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KSD ກິ່ງສະດາ</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@300;400;500;700&display=swap">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <div class="logo">
+        <h2>KSD<span>ກິ່ງສະດາ</span></h2>
+      </div>
+      <div class="modern-search">
+        <input type="text" id="searchInput" placeholder="ຄົ້ນຫາສິນຄ້າ..." onkeyup="searchProduct()">
+        <button class="search-btn">🔍</button>
+      </div>
+      <nav class="nav-menu">
+        <ul>
+          <li><a href="index.html">ໜ້າຫຼັກ</a></li>
+          <li><a href="products.html">ສິນຄ້າ</a></li>
+          <li><a href="services.html">ບໍລິການ</a></li>
+          <li><a href="about.html">ກ່ຽວກັບເຮົາ</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Banner -->
+  <section class="banner-section">
+    <div class="banner-overlay"></div>
+    <div class="banner-content">
+      <h1>ຍິນດີຕ້ອນຮັບເຂົ້າສູ່ກິ່ງສະດາ</h1>
+      <p>ຂົນສົ່ງ ແລະ ການຄ້າ ຂາເຂົ້າ-ຂາອອກ ຈໍາກັດ</p>
+      <a href="products.html" class="btn-banner">ເລືອກຊື້ສິນຄ້າ</a>
+    </div>
+  </section>
+
+  <!-- Products -->
+  <main class="main-content">
+    <div class="section-title">
+      <h2>ສິນຄ້າແນະນໍາ</h2>
+      <p>ເລືອກຊື້ສິນຄ້າຄຸນນະພາບດີໃນລາຄາພິເສດ</p>
+    </div>
+    <div class="product-grid" id="dynamic-product-grid"></div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-about">
+        <h3>ກ່ຽວກັບໂຄງການ</h3>
+        <p>ເວັບໄຊທ໌ນີ້ເປັນສ່ວນໜຶ່ງຂອງວິຊາຮຽນ ພັດທະນາຂຶ້ນມາເພື່ອທົດສອບການຈັດ Layout ແບບ Responsive Design ໃຫ້ຮອງຮັບທຸກອຸປະກອນ.</p>
+      </div>
+      <div class="footer-team">
+        <h3>DEV</h3>
+        <div class="team-grid">
+          <div class="member">
+            <img src="Image/Prosli.jpeg" alt="Soukpasert" class="profile-avatar" onerror="this.style.display='none'">
+            <div class="member-info">
+              <p class="name">MR. Soukpasert Douangboupha</p>
+              <p class="role">Phone: +856 20 548 35745</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 ພັດທະນາໂດຍ ນ້ອງນັກສຶກສາ. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <script src="ksd-common.js"></script>
+
+</body>
+</html>
