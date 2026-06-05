@@ -90,7 +90,7 @@
     .slip-modal-box button { margin-top:12px; padding:8px 24px; background:#0f172a; color:white; border:none; border-radius:6px; cursor:pointer; font-size:14px; }
   </style>
 </head>
-<body data-admin-page="true">
+<body data-admin-page="true" data-skip-sidebar="true">
 
 <button class="admin-sidebar-toggle" id="sidebarToggle" onclick="document.querySelector('.admin-sidebar').classList.toggle('open')">☰</button>
 
@@ -228,10 +228,43 @@
               <th>ທີ່ຢູ່</th>
               <th>ຍົດ</th>
               <th>ວັນທີລົງທະບຽນ</th>
+              <th>ຈັດການ</th>
             </tr>
           </thead>
           <tbody id="admin-user-list"></tbody>
         </table>
+      </div>
+    </div>
+
+    <!-- Edit User Modal -->
+    <div id="editUserModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:9999; align-items:center; justify-content:center;">
+      <div style="background:white; padding:28px; border-radius:14px; width:100%; max-width:420px; box-shadow:0 8px 32px rgba(0,0,0,0.18);">
+        <h3 style="margin-bottom:18px; color:#0f172a;">✏️ ແກ້ໄຂຂໍ້ມູນຜູ້ໃຊ້</h3>
+        <input type="hidden" id="editUserPhone">
+        <div class="form-group">
+          <label>ຊື່ ແລະ ນາມສະກຸນ</label>
+          <input type="text" id="editUserName" class="form-control" placeholder="ຊື່ຜູ້ໃຊ້...">
+        </div>
+        <div class="form-group">
+          <label>ເບີໂທ (ໃໝ່)</label>
+          <input type="tel" id="editUserNewPhone" class="form-control" placeholder="020 XXXXXXXX">
+        </div>
+        <div class="form-group">
+          <label>ອາຍຸ</label>
+          <input type="number" id="editUserAge" class="form-control" min="1" max="120" placeholder="ອາຍຸ...">
+        </div>
+        <div class="form-group">
+          <label>ທີ່ຢູ່</label>
+          <input type="text" id="editUserAddress" class="form-control" placeholder="ບ້ານ, ເມືອງ, ແຂວງ...">
+        </div>
+        <div class="form-group">
+          <label>ລະຫັດຜ່ານໃໝ່ <span style="color:#94a3b8;font-size:12px;">(ຖ້າຕ້ອງການປ່ຽນ)</span></label>
+          <input type="password" id="editUserPassword" class="form-control" placeholder="ປ່ອຍຫວ່າງເພື່ອຄົງເດີມ">
+        </div>
+        <div style="display:flex; gap:10px; margin-top:8px;">
+          <button class="btn btn-blue" onclick="saveEditUser()">💾 ບັນທຶກ</button>
+          <button class="btn btn-gray" onclick="closeEditUserModal()">ຍົກເລີກ</button>
+        </div>
       </div>
     </div>
 
@@ -342,17 +375,23 @@
     // Users table
     const userList = document.getElementById('admin-user-list');
     userList.innerHTML = users.length === 0
-      ? '<tr><td colspan="6" style="text-align:center;color:#64748b;padding:20px;">ຍັງບໍ່ມີຜູ້ໃຊ້</td></tr>'
-      : users.map(u => `
+      ? '<tr><td colspan="7" style="text-align:center;color:#64748b;padding:20px;">ຍັງບໍ່ມີຜູ້ໃຊ້</td></tr>'
+      : users.map(u => {
+          const isAdm = ADMIN_PHONES.includes(String(u.phone).replace(/\s/g, ''));
+          return `
           <tr>
             <td><strong>${escHtml(u.name)}</strong></td>
             <td>${escHtml(u.phone)}</td>
             <td>${escHtml(u.age || '—')}</td>
-            <td style="max-width:200px; word-break:break-word;">${escHtml(u.address || '—')}</td>
-            <td>${ADMIN_PHONES.includes(String(u.phone).replace(/\s/g, '')) ? '👑 Admin' : '👤 Member'}</td>
-            <td>${u.registeredAt ? new Date(u.registeredAt).toLocaleString('lo-LA') : '—'}</td>
-          </tr>
-        `).join('');
+            <td style="max-width:160px; word-break:break-word;">${escHtml(u.address || '—')}</td>
+            <td>${isAdm ? '👑 Admin' : '👤 Member'}</td>
+            <td style="white-space:nowrap;">${u.registeredAt ? new Date(u.registeredAt).toLocaleString('lo-LA') : '—'}</td>
+            <td style="white-space:nowrap;">
+              <button class="btn btn-yellow" onclick="openEditUserModal('${String(u.phone).replace(/'/g, "\\'")}')" style="padding:5px 10px;font-size:13px;">✏️ ແກ້ໄຂ</button>
+              ${isAdm ? '' : `<button class="btn btn-red" onclick="deleteUser('${String(u.phone).replace(/'/g, "\\'")}')\" style="padding:5px 10px;font-size:13px;margin-left:4px;">🗑 ລຶບ</button>`}
+            </td>
+          </tr>`;
+        }).join('');
   }
 
   // ===== SAVE PRODUCT =====
@@ -455,6 +494,75 @@
     }
   }
 
+  // ===== EDIT USER =====
+  function openEditUserModal(phone) {
+    const users = JSON.parse(localStorage.getItem('ksd_users')) || [];
+    const u = users.find(u => String(u.phone).replace(/\s/g,'') === String(phone).replace(/\s/g,''));
+    if (!u) return;
+    document.getElementById('editUserPhone').value    = u.phone;
+    document.getElementById('editUserName').value     = u.name || '';
+    document.getElementById('editUserNewPhone').value = u.phone || '';
+    document.getElementById('editUserAge').value      = u.age || '';
+    document.getElementById('editUserAddress').value  = u.address || '';
+    document.getElementById('editUserPassword').value = '';
+    document.getElementById('editUserModal').style.display = 'flex';
+  }
+
+  function closeEditUserModal() {
+    document.getElementById('editUserModal').style.display = 'none';
+  }
+
+  function saveEditUser() {
+    const oldPhone = String(document.getElementById('editUserPhone').value).replace(/\s/g,'');
+    const newName  = document.getElementById('editUserName').value.trim();
+    const newPhone = String(document.getElementById('editUserNewPhone').value).replace(/\s/g,'');
+    const newAge   = document.getElementById('editUserAge').value.trim();
+    const newAddr  = document.getElementById('editUserAddress').value.trim();
+    const newPass  = document.getElementById('editUserPassword').value;
+
+    if (!newName) { alert('ກະລຸນາຕື່ມຊື່'); return; }
+    if (!newPhone) { alert('ກະລຸນາຕື່ມເບີໂທ'); return; }
+
+    let users = JSON.parse(localStorage.getItem('ksd_users')) || [];
+    const idx = users.findIndex(u => String(u.phone).replace(/\s/g,'') === oldPhone);
+    if (idx < 0) { alert('ບໍ່ພົບຜູ້ໃຊ້ນີ້'); return; }
+
+    // ກວດສອບ phone ຊ້ຳ (ຍົກເວັ້ນຕົນເອງ)
+    if (newPhone !== oldPhone && users.some(u => String(u.phone).replace(/\s/g,'') === newPhone)) {
+      alert('ເບີໂທນີ້ຖືກໃຊ້ງານແລ້ວ'); return;
+    }
+
+    users[idx] = {
+      ...users[idx],
+      name: newName,
+      phone: newPhone,
+      age: newAge,
+      address: newAddr,
+      ...(newPass ? { password: newPass } : {}),
+    };
+
+    localStorage.setItem('ksd_users', JSON.stringify(users));
+    // Sync to Firebase
+    if (typeof syncUsersToFirebase === 'function') syncUsersToFirebase(users);
+
+    closeEditUserModal();
+    loadAdminData();
+    alert('✅ ແກ້ໄຂຂໍ້ມູນຜູ້ໃຊ້ຮຽບຮ້ອຍ!');
+  }
+
+  // ===== DELETE USER =====
+  function deleteUser(phone) {
+    const normPhone = String(phone).replace(/\s/g,'');
+    if (ADMIN_PHONES.includes(normPhone)) { alert('⛔ ບໍ່ສາມາດລຶບ Admin ໄດ້'); return; }
+    if (!confirm('ຢືນຢັນລຶບຜູ້ໃຊ້ນີ້?')) return;
+    let users = JSON.parse(localStorage.getItem('ksd_users')) || [];
+    users = users.filter(u => String(u.phone).replace(/\s/g,'') !== normPhone);
+    localStorage.setItem('ksd_users', JSON.stringify(users));
+    if (typeof syncUsersToFirebase === 'function') syncUsersToFirebase(users);
+    loadAdminData();
+    alert('🗑 ລຶບຜູ້ໃຊ້ຮຽບຮ້ອຍ');
+  }
+
   // Init
   loadAdminData();
 </script>
@@ -475,6 +583,15 @@
 
   const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
   const db = getDatabase(app);
+
+  // Expose user sync for inline scripts
+  window.syncUsersToFirebase = async (users) => {
+    try {
+      const data = {};
+      users.forEach(u => { if (u.phone) data[String(u.phone).replace(/\s/g,'')] = u; });
+      await set(ref(db, 'users'), data);
+    } catch(e) { console.warn('User sync failed:', e.message); }
+  };
 
   // ===== SYNC PRODUCTS =====
   window._ksdSyncFirebase = async (list) => {
@@ -582,16 +699,24 @@
     if (!userList) return;
     const ADMIN_P = ['02054835745'];
     userList.innerHTML = users.length === 0
-      ? '<tr><td colspan="6" style="text-align:center;color:#64748b;padding:20px;">ຍັງບໍ່ມີຜູ້ໃຊ້</td></tr>'
-      : users.map(u => `
+      ? '<tr><td colspan="7" style="text-align:center;color:#64748b;padding:20px;">ຍັງບໍ່ມີຜູ້ໃຊ້</td></tr>'
+      : users.map(u => {
+          const isAdm = ADMIN_P.includes(String(u.phone||'').replace(/\s/g,''));
+          const escapedPhone = escH(String(u.phone||'').replace(/'/g,"\\'"));
+          return `
           <tr>
             <td><strong>${escH(u.name)}</strong></td>
             <td>${escH(u.phone)}</td>
             <td>${escH(u.age||'—')}</td>
-            <td style="max-width:200px;word-break:break-word;">${escH(u.address||'—')}</td>
-            <td>${ADMIN_P.includes(String(u.phone).replace(/\s/g,'')) ? '👑 Admin' : '👤 Member'}</td>
-            <td>${u.registeredAt ? new Date(u.registeredAt).toLocaleString('lo-LA') : '—'}</td>
-          </tr>`).join('');
+            <td style="max-width:160px;word-break:break-word;">${escH(u.address||'—')}</td>
+            <td>${isAdm ? '👑 Admin' : '👤 Member'}</td>
+            <td style="white-space:nowrap;">${u.registeredAt ? new Date(u.registeredAt).toLocaleString('lo-LA') : '—'}</td>
+            <td style="white-space:nowrap;">
+              <button class="btn btn-yellow" onclick="openEditUserModal('${escapedPhone}')" style="padding:5px 10px;font-size:13px;">✏️ ແກ້ໄຂ</button>
+              ${isAdm ? '' : `<button class="btn btn-red" onclick="deleteUser('${escapedPhone}')" style="padding:5px 10px;font-size:13px;margin-left:4px;">🗑 ລຶບ</button>`}
+            </td>
+          </tr>`;
+        }).join('');
   });
 
 </script>

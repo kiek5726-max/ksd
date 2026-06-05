@@ -777,20 +777,20 @@ async function setupFirebaseListeners() {
   try {
     const { ref, onValue } = await import('https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js');
 
-    // Real-time product updates
+    // Real-time product updates — ອັບເດດສະເພາະຖ້າ Firebase ມີຂໍ້ມູນ (ກັນ overwrite ດ້ວຍຂໍ້ມູນຫວ່າງ)
     onValue(ref(firebaseDb, 'products'), snapshot => {
       const data = snapshot.val();
-      if (!data || !Object.keys(data).length) return;
+      if (!data || !Object.keys(data).length) return; // Firebase ຫວ່າງ — ຮັກສາ localStorage ໄວ້
       const fbProducts = Object.entries(data)
         .map(([key, val]) => normalizeProduct({
-          id: key,
+          id: isNaN(Number(key)) ? key : Number(key),
           name: val.name,
           price: val.price,
           desc: val.desc,
           image: val.image,
         }))
         .filter(Boolean);
-      if (!fbProducts.length) return;
+      if (!fbProducts.length) return; // parse ອອກມາຫວ່າງ — ບໍ່ overwrite
       localStorage.setItem('backend_products', JSON.stringify(fbProducts));
       renderProducts();
       console.log('✅ Products updated from Firebase');
