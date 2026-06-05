@@ -721,16 +721,30 @@
   });
 
   // USERS
-  oonValue(ref(db, 'users'), (snapshot) => {
-    const users = snapshot.val();
-    if (users) {
-        console.log("ຂໍ້ມູນລູກຄ້າ:", users);
-        // ເອີ້ນຟັງຊັນເພື່ອສະແດງລາຍຊື່ລູກຄ້າ (ຕົວຢ່າງ: renderUserTable(users))
-        if (typeof renderUserTable === 'function') {
-            renderUserTable(Object.values(users));
+  function setupUserListener(db) {
+    const { ref, onValue } = window.firebase.database; // ປັບຕາມ Library ທີ່ເຈົ້າໃຊ້
+    onValue(ref(db, 'users'), (snapshot) => {
+        const users = snapshot.val();
+        if (users) {
+            console.log("ພົບລາຍຊື່ລູກຄ້າ:", users);
+            // ສັ່ງໃຫ້ Render ຕາຕະລາງລູກຄ້າ (ຖ້າເຈົ້າມີຟັງຊັນນີ້)
+            if (typeof renderUsersTable === 'function') {
+                renderUsersTable(Object.entries(users));
+            }
         }
-    }
-});
+    });
+}
+function renderUsersTable(usersArray) {
+    const tbody = document.getElementById('users-table-body');
+    if(!tbody) return;
+    tbody.innerHTML = usersArray.map(([key, u]) => `
+        <tr>
+            <td>${u.name || 'ບໍ່ມີຊື່'}</td>
+            <td>${u.email || 'ບໍ່ມີເມວ'}</td>
+            <td>${u.phone || 'ບໍ່ມີເບີ'}</td>
+        </tr>
+    `).join('');
+}
 </script>
 <script src="ksd-common.js"></script>
 </body>

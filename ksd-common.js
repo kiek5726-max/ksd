@@ -823,6 +823,7 @@ async function setupFirebaseListeners() {
     });
 
     // Real-time users updates
+    
     onValue(ref(firebaseDb, 'users'), snapshot => {
       const data = snapshot.val();
       if (data) {
@@ -938,3 +939,16 @@ window.updateProduct = async function(productId, updatedData) {
         alert("❌ ເກີດຂໍ້ຜິດພາດ: " + error.message);
     }
 };
+function setupUserListener(db) {
+    const { ref, onValue } = window.firebase.database; // ປັບຕາມ Library ທີ່ເຈົ້າໃຊ້
+    onValue(ref(db, 'users'), (snapshot) => {
+        const users = snapshot.val();
+        if (users) {
+            console.log("ພົບລາຍຊື່ລູກຄ້າ:", users);
+            // ສັ່ງໃຫ້ Render ຕາຕະລາງລູກຄ້າ (ຖ້າເຈົ້າມີຟັງຊັນນີ້)
+            if (typeof renderUsersTable === 'function') {
+                renderUsersTable(Object.entries(users));
+            }
+        }
+    });
+}
