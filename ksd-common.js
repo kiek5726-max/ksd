@@ -916,26 +916,25 @@ document.addEventListener('DOMContentLoaded', () => {
   // Setup real-time Firebase listeners
   setupFirebaseListeners();
 });
-// ຟັງຊັນສຳລັບອັບເດດສິນຄ້າ
+// ໃຫ້ແນ່ໃຈວ່າຟັງຊັນ updateProduct ຂອງທ່ານມີຮູບແບບນີ້
 window.updateProduct = async function(productId, updatedData) {
-    console.log("ກຳລັງອັບເດດສິນຄ້າ ID:", productId);
-    console.log("ຂໍ້ມູນໃໝ່:", updatedData);
+    if (!productId) {
+        alert("❌ ບໍ່ພົບ ID ສິນຄ້າ, ບໍ່ສາມາດອັບເດດໄດ້!");
+        return;
+    }
+    // ຮັບປະກັນວ່າລາຄາເປັນຕົວເລກ
+    if (updatedData.price) {
+        updatedData.price = Number(updatedData.price);
+    }
     
     try {
-        // ດຶງ module ມາໃຊ້ພາຍໃນຟັງຊັນ
         const { getDatabase, ref, update } = await import('https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js');
         const db = getDatabase();
-        
-        // ອັບເດດຂໍ້ມູນ
-        // ໝາຍເຫດ: ໃຫ້ກວດເບິ່ງວ່າ Path 'products/' ຖືກຕ້ອງຕາມ Firebase ຂອງເຈົ້າແລ້ວ
         await update(ref(db, 'products/' + productId), updatedData);
-        
-        alert("✅ ອັບເດດສິນຄ້າສຳເລັດ");
-        
-        // ບັງຄັບໃຫ້ Refresh ໜ້າເວັບເພື່ອດຶງຂໍ້ມູນໃໝ່ຈາກ Firebase ມາສະແດງ
-        location.reload(); 
+        alert("✅ ອັບເດດສິນຄ້າສຳເລັດ!");
+        location.reload(); // Refresh ໜ້າເວັບເພື່ອເບິ່ງຜົນລ້າສຸດ
     } catch (error) {
-        console.error("ອັບເດດບໍ່ໄດ້:", error);
+        console.error("Error updating:", error);
         alert("❌ ເກີດຂໍ້ຜິດພາດ: " + error.message);
     }
 };
