@@ -917,24 +917,25 @@ document.addEventListener('DOMContentLoaded', () => {
   setupFirebaseListeners();
 });
 // ຟັງຊັນສຳລັບອັບເດດສິນຄ້າ
-async function updateProduct(productId, updatedData) {
-    // ດຶງ Firebase ມາໃຊ້ງານ
-    const { getDatabase, ref, update } = await import('https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js');
-    const db = getDatabase();
+window.updateProduct = async function(productId, updatedData) {
+    console.log("ກຳລັງອັບເດດສິນຄ້າ ID:", productId);
+    console.log("ຂໍ້ມູນໃໝ່:", updatedData);
     
     try {
-        // ອ້າງອີງໄປທີ່ Path ຂອງສິນຄ້າ (ປ່ຽນ 'products/' ຖ້າ Path ຂອງເຈົ້າເປັນຊື່ອື່ນ)
-        const productRef = ref(db, 'products/' + productId);
+        // ດຶງ module ມາໃຊ້ພາຍໃນຟັງຊັນ
+        const { getDatabase, ref, update } = await import('https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js');
+        const db = getDatabase();
         
-        // ເຮັດການອັບເດດຂໍ້ມູນ
-        await update(productRef, updatedData);
+        // ອັບເດດຂໍ້ມູນ
+        // ໝາຍເຫດ: ໃຫ້ກວດເບິ່ງວ່າ Path 'products/' ຖືກຕ້ອງຕາມ Firebase ຂອງເຈົ້າແລ້ວ
+        await update(ref(db, 'products/' + productId), updatedData);
         
         alert("✅ ອັບເດດສິນຄ້າສຳເລັດ");
         
-        // ບັງຄັບໃຫ້ Refresh ໜ້າເວັບເພື່ອດຶງຂໍ້ມູນໃໝ່ຈາກ Firebase
-        location.reload(true); 
+        // ບັງຄັບໃຫ້ Refresh ໜ້າເວັບເພື່ອດຶງຂໍ້ມູນໃໝ່ຈາກ Firebase ມາສະແດງ
+        location.reload(); 
     } catch (error) {
         console.error("ອັບເດດບໍ່ໄດ້:", error);
-        alert("❌ ເກີດຂໍ້ຜິດພາດໃນການອັບເດດ: " + error.message);
+        alert("❌ ເກີດຂໍ້ຜິດພາດ: " + error.message);
     }
-}
+};
