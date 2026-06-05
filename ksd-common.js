@@ -14,32 +14,28 @@ const FIREBASE_CONFIG = {
   messagingSenderId: '984977062231',
   appId: '1:984977062231:web:39ebfc780ebc875dec2612',
 };
-// ເພີ່ມ getStorage, ref, uploadBytes, getDownloadURL ເຂົ້າໃນການ import
-const { getStorage, ref, uploadBytes, getDownloadURL } = await import('https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js');
-async function uploadProductImage(file, productId) {
-    const storage = getStorage(); // ຕ້ອງໄດ້ import getStorage ມາກ່ອນ
-    const storageRef = ref(storage, 'products/' + productId);
-
+document.addEventListener('DOMContentLoaded', async () => {
     try {
-        // ອັບໂຫຼດໄຟລ໌
-        const snapshot = await uploadBytes(storageRef, file);
-        
-        // ດຶງ URL ມາ
-        const downloadURL = await getDownloadURL(snapshot.ref);
-        
-        // ບັນທຶກ URL ລົງ Database
-        const { getDatabase, ref: dbRef, update } = await import('https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js');
-        const db = getDatabase();
-        await update(dbRef(db, 'products/' + productId), {
-            imageUrl: downloadURL 
-        });
-        
-        console.log("✅ ອັບໂຫຼດຮູບສຳເລັດ:", downloadURL);
-        return downloadURL;
+        // 1. Initialize Firebase ກ່ອນ
+        await initializeFirebase();
+
+        // 2. ຫຼັງຈາກນັ້ນຈຶ່ງ Render ສິນຄ້າ
+        if (typeof renderProducts === 'function') {
+            renderProducts();
+        }
+
+        // 3. ເອີ້ນຟັງຊັນສ້າງປຸ່ມ 3 ຂີດ (ຖ້າມີ)
+        if (typeof initDragBtn === 'function') {
+            initDragBtn();
+        }
+
+        // 4. ເອີ້ນຟັງຊັນ Listener ຕ່າງໆ
+        setupFirebaseListeners();
+
     } catch (error) {
-        console.error("❌ ເກີດຂໍ້ຜິດພາດໃນການອັບໂຫຼດ:", error);
+        console.error("ເກີດຂໍ້ຜິດພາດໃນການໂຫຼດໜ້າເວັບ:", error);
     }
-}
+});
 let firebaseApp = null;
 let firebaseDb = null;
 let firebaseInitialized = false;
@@ -702,38 +698,60 @@ function getProducts() {
   }
 }
 
-function renderProducts() {
-  const grid = document.getElementById('dynamic-product-grid');
-  if (!grid) return;
-  const list = getProducts();
-  const lang = localStorage.getItem('ksd_lang') || 'lo';
-  const ui = UI_I18N[lang] || UI_I18N.lo;
+// --- ແກ້ໄຂຟັງຊັນ renderProducts ໃຫ້ຖືກຕ້ອງ ---
+async function renderProducts() {
+    const grid = document.getElementById('dynamic-product-grid');
+    if (!grid) {
+        console.warn("ບໍ່ພົບ element id='dynamic-product-grid', ກຳລັງຂ້າມການ render...");
+        return;
+    }
 
-  if (!list.length) {
-    grid.innerHTML = `<div class="product-empty">${ui.emptyProducts}</div>`;
-    return;
-  }
+    // ດຶງຂໍ້ມູນຈາກ localStorage ທີ່ sync ມາຈາກ Firebase
+    const rawData = localStorage.getItem('backend_products');
+    if (!rawData) return;
 
-  grid.innerHTML = list.map(p => `
-    <div class="product-card">
-      <div class="product-img">
-        <img src="${escapeAttr(p.image)}" alt="${escapeAttr(p.name)}" onerror="this.src='${FALLBACK_IMAGE}'">
-      </div>
-      <div class="product-info">
-        <h3>${escapeHtml(p.name)}</h3>
-        <p class="price">${Number(p.price).toLocaleString()} ກີບ</p>
-        <p class="desc">${escapeHtml(p.desc)}</p>
-        <button class="btn-buy"
-          data-id="${escapeAttr(p.id)}"
-          data-name="${escapeAttr(p.name)}"
-          data-price="${Number(p.price)}"
-          data-image="${escapeAttr(p.image)}">
-          ${ui.addCart}
-        </button>
-      </div>
-    </div>
-  `).join('');
+    const list = JSON.parse(rawData);
+    
+    grid.innerHTML = list.map(p => `
+        <div class="product-card">
+            <div class="product-img">
+                <img src="${p.image || 'Image/KSD.svg'}" alt="${p.name || 'ສິນຄ້າ'}" onerror="this.src='Image/KSD.svg'">
+            </div>
+            <div class="product-info">
+                <h3>${p.name || ''}</h3>
+                <p class="price">${Number(p.price || 0).toLocaleString()} ກີບ</p>
+                <p class="desc">${p.desc || ''}</p>
+                <button class="btn-buy" onclick="addToCart('${p.id}')">ເພີ່ມໃສ່ກະຕ່າ</button>
+            </div>
+        </div>
+    `).join('');
 }
+
+// --- ແກ້ໄຂ Listener ໃຫ້ດຶງຈາກ 'products' ໂດຍກົງ ---
+function setupFirebaseListeners() {
+    // ດຶງຂໍ້ມູນສະເພາະ products
+    onValue(ref(db, 'products'), (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+            // ປ່ຽນ Object ເປັນ Array
+            const list = Object.entries(data).map(([k, v]) => ({
+                id: k,
+                ...v
+            })).filter(p => p.name);
+            
+            localStorage.setItem('backend_products', JSON.stringify(list));
+            console.log('✅ ສິນຄ້າຖືກ Update ຈາກ Firebase ແລ້ວ');
+            renderProducts(); // ສັ່ງ Render ທັນທີທີ່ຂໍ້ມູນມາ
+        }
+    });
+}
+
+// ເຮັດໃຫ້ທຸກຢ່າງເຮັດວຽກເມື່ອໜ້າເວັບໂຫຼດສຳເລັດ
+document.addEventListener('DOMContentLoaded', async () => {
+    await initializeFirebase(); 
+    setupFirebaseListeners();
+    renderProducts();
+});
 
 // ========== CART (ksd_cart key) ==========
 function addToCart(id, name, price, image) {
