@@ -28,7 +28,7 @@
       font-family: 'Noto Sans Lao', sans-serif; transition: all 0.2s;
     }
     .admin-nav button:hover { background: #195a05; color: #ffffff; }
-    .admin-nav button.active { background: #005512; color: #ffffff; font-weight: 600; }
+    .admin-nav button.active { background: #005512; color: #38bdf8; font-weight: 600; }
 
     /* ===== MAIN ===== */
     .admin-main { flex: 1;
@@ -210,7 +210,7 @@
           </div>
           <div class="form-group">
             <label>🖼️ ຮູບສິນຄ້າ</label>
-            <input type="file" id="imageUpload" accept="image/*" onchange="handleImageUpload(event)">
+            <input type="file" id="product-image-file" class="form-control" accept="image/*" onchange="previewProductImage()">
             <input type="hidden" id="product-image">
             <div class="image-preview-box"><img id="image-preview" src="" alt="preview"></div>
           </div>
