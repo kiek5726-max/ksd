@@ -85,7 +85,12 @@
   </style>
 </head>
 <body data-firebase="false" data-history-page="true">
-
+<div class="nav-back" style="margin: 20px 0;">
+    <button onclick="window.location.href='index.html'" 
+            style="padding: 10px 20px; background-color: #005500; color: white; border: none; border-radius: 6px; cursor: pointer;">
+        ⬅️ ກັບໜ້າຫຼັກ
+    </button>
+</div>
 <!-- Slip modal -->
 <div class="slip-modal-bg" id="slipModal" onclick="if(event.target===this)closeSlipModal()">
   <div class="slip-modal-box">
@@ -216,6 +221,25 @@
       if (typeof renderOrders === 'function') renderOrders(allOrders, myPhone);
     });
   </script>
-
+<script>
+    // ລໍຖ້າໃຫ້ໜ້າເວັບໂຫຼດຄົບກ່ອນ
+    window.addEventListener('load', function() {
+        // ຊອກຫາ Elements ທີ່ອາດຈະເປັນເມນູ 3 ຂີດ (ປັບຊື່ Class ຕາມທີ່ທ່ານເຫັນໃນ Inspect Element)
+        const menuIcon = document.querySelector('.menu-icon, .sidebar-toggle, .hamburger');
+        if (menuIcon) {
+            menuIcon.style.display = 'none';
+        }
+    });
+</script>
+<script>
+    // ລຶບປຸ່ມ .navbar-toggler ອອກທັນທີທີ່ໜ້າເວັບໂຫຼດ
+    window.addEventListener('DOMContentLoaded', (event) => {
+        const toggleButton = document.querySelector('.navbar-toggler');
+        if (toggleButton) {
+            toggleButton.remove();
+        }
+    });
+</script>
 </body>
+<body class="history-page"></body>
 </html>

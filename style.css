@@ -674,3 +674,16 @@ body {
 .password-change-section, .account-settings {
     display: none !important;
 }
+button {
+  background-color: #00791a;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+}
+button:hover {
+  background-color: #005e1c;
+}
+.history-page .site-header {
+    display: none !important;
+}

@@ -894,6 +894,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!localStorage.getItem('backend_products')) {
     localStorage.setItem('backend_products', JSON.stringify(DEFAULT_PRODUCTS));
   }
+  if (!window.location.pathname.includes('history.html')) {
+  }
 
   injectSharedUI();
   initDragBtn();
@@ -913,6 +915,15 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('searchInput')?.addEventListener('keydown', e => {
     if (e.key === 'Enter') searchProduct();
   });
+  // --- ເພີ່ມສຳລັບເຊື່ອງເມນູ 3 ຂີດໃນໜ້າ history.html ---
+document.addEventListener('DOMContentLoaded', function() {
+    if (window.location.pathname.includes('history.html')) {
+        const toggleButton = document.querySelector('.navbar-toggler');
+        if (toggleButton) {
+            toggleButton.style.display = 'none';
+        }
+    }
+});
 
   // Setup real-time Firebase listeners
   setupFirebaseListeners();
