@@ -14,7 +14,32 @@ const FIREBASE_CONFIG = {
   messagingSenderId: '984977062231',
   appId: '1:984977062231:web:39ebfc780ebc875dec2612',
 };
+// ເພີ່ມ getStorage, ref, uploadBytes, getDownloadURL ເຂົ້າໃນການ import
+const { getStorage, ref, uploadBytes, getDownloadURL } = await import('https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js');
+async function uploadProductImage(file, productId) {
+    const storage = getStorage(); // ຕ້ອງໄດ້ import getStorage ມາກ່ອນ
+    const storageRef = ref(storage, 'products/' + productId);
 
+    try {
+        // ອັບໂຫຼດໄຟລ໌
+        const snapshot = await uploadBytes(storageRef, file);
+        
+        // ດຶງ URL ມາ
+        const downloadURL = await getDownloadURL(snapshot.ref);
+        
+        // ບັນທຶກ URL ລົງ Database
+        const { getDatabase, ref: dbRef, update } = await import('https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js');
+        const db = getDatabase();
+        await update(dbRef(db, 'products/' + productId), {
+            imageUrl: downloadURL 
+        });
+        
+        console.log("✅ ອັບໂຫຼດຮູບສຳເລັດ:", downloadURL);
+        return downloadURL;
+    } catch (error) {
+        console.error("❌ ເກີດຂໍ້ຜິດພາດໃນການອັບໂຫຼດ:", error);
+    }
+}
 let firebaseApp = null;
 let firebaseDb = null;
 let firebaseInitialized = false;
