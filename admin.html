@@ -721,13 +721,16 @@
   });
 
   // USERS
-  onValue(ref(db, 'users'), snap => {
-    const data = snap.val();
-    if (!data) return;
-    const users = Array.isArray(data) ? data : Object.values(data);
-    localStorage.setItem('ksd_users', JSON.stringify(users));
-    if (typeof renderUsersTable === 'function') renderUsersTable();
-  });
+  oonValue(ref(db, 'users'), (snapshot) => {
+    const users = snapshot.val();
+    if (users) {
+        console.log("ຂໍ້ມູນລູກຄ້າ:", users);
+        // ເອີ້ນຟັງຊັນເພື່ອສະແດງລາຍຊື່ລູກຄ້າ (ຕົວຢ່າງ: renderUserTable(users))
+        if (typeof renderUserTable === 'function') {
+            renderUserTable(Object.values(users));
+        }
+    }
+});
 </script>
 <script src="ksd-common.js"></script>
 </body>
