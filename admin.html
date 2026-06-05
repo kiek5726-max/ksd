@@ -658,8 +658,8 @@
 
   // ---- real-time listeners ----
   // PRODUCTS
-  onValue(ref(db, 'products'), snap => {
-    const data = snap.val();
+  onValue(ref(db, '/'), (snapshot) => {
+    const data = snapshot.val();
     if (!data || !Object.keys(data).length) {
       // Firebase ຫວ່າງ → push localStorage ໄປ Firebase ແທນ
       const local = JSON.parse(localStorage.getItem('backend_products') || '[]');
