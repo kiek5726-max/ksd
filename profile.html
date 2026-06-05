@@ -53,7 +53,11 @@
 
     <div class="input-group">
       <label>ຮູບໂປຣໄຟລ໌</label>
-      <input type="file" id="imageInput" accept="image/*" onchange="previewImage(event)">
+      <input type="file" 
+       id="imageUpload" 
+       accept="image/*" 
+       capture="environment" 
+       onchange="handleImageUpload(event)">
       <img id="imagePreview" src="#" alt="Preview">
     </div>
 

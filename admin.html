@@ -210,7 +210,11 @@
           </div>
           <div class="form-group">
             <label>🖼️ ຮູບສິນຄ້າ</label>
-            <input type="file" id="product-image-file" class="form-control" accept="image/*" onchange="previewProductImage()">
+            <input type="file" 
+       id="imageUpload" 
+       accept="image/*" 
+       capture="environment" 
+       onchange="handleImageUpload(event)">
             <input type="hidden" id="product-image">
             <div class="image-preview-box"><img id="image-preview" src="" alt="preview"></div>
           </div>
