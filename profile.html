@@ -16,6 +16,9 @@
       box-shadow: 0 10px 30px rgba(0,0,0,0.1);
       height: fit-content;
     }
+    .sidebar-toggle, .hamburger, .menu-icon, #sidebar-toggle-btn {
+        display: none !important;
+    }
     h2 { text-align: center; color: #004d17; margin-bottom: 25px; }
     .input-group { margin-bottom: 16px; }
     .input-group label { display: block; margin-bottom: 6px; font-weight: bold; font-size: 14px; color: #334155; }
@@ -69,7 +72,7 @@
       <label>ເບີໂທ</label>
       <input type="tel" id="phoneInput" placeholder="020 XXXXXXXX">
     </div>
-    <<div class="auth-input-group">
+    <div class="auth-input-group">
   <label for="userAddress">ທີ່ຢູ່</label>
   <input type="text" id="userAddress" placeholder="ທີ່ຢູ່ຂອງທ່ານ...">
   <button type="button" onclick="getLocation()" class="btn-location">📍 ຈັບໂລເຄຊັ່ນອັດຕະໂນມັດ</button>
@@ -116,13 +119,14 @@
       localStorage.setItem('user_name', nameVal);
       localStorage.setItem('user_age', document.getElementById('ageInput').value);
       localStorage.setItem('user_phone', document.getElementById('phoneInput').value);
-      localStorage.setItem('user_address', document.getElementById('addressInput').value);
+      // ປ່ຽນ 'addressInput' ເປັນ 'userAddress' ໃຫ້ຕົງກັບ ID ຂອງ input ທີ່ຢູ່
+      localStorage.setItem('user_address', document.getElementById('userAddress').value);
 
       updateUserInStore({
         name: nameVal,
         age: document.getElementById('ageInput').value,
         phone: document.getElementById('phoneInput').value,
-        address: document.getElementById('addressInput').value,
+        address: document.getElementById('userAddress').value,
       });
 
       function finishSave() {
@@ -153,7 +157,7 @@
       document.getElementById('nameInput').value    = localStorage.getItem('user_name')    || '';
       document.getElementById('ageInput').value     = localStorage.getItem('user_age')     || '';
       document.getElementById('phoneInput').value   = localStorage.getItem('user_phone')   || '';
-      document.getElementById('addressInput').value = localStorage.getItem('user_address') || '';
+      document.getElementById('userAddress').value = localStorage.getItem('user_address') || '';
 
       const savedImg = localStorage.getItem('user_image');
       if (savedImg) {
@@ -192,6 +196,39 @@
         alert("Browser ຂອງທ່ານບໍ່ຮອງຮັບລະບົບຈັບໂລເຄຊັ່ນ.");
     }
 }
+async function saveProfile() {
+        const name = document.getElementById('userName').value; // ປ່ຽນ id ໃຫ້ຕົງກັບ HTML ຂອງທ່ານ
+        const address = document.getElementById('userAddress').value;
+        const phone = localStorage.getItem('user_phone'); // ເບີໂທທີ່ເກັບໄວ້ຕອນ Login
+
+        if (!phone) {
+            alert("ບໍ່ພົບຂໍ້ມູນຜູ້ໃຊ້, ກະລຸນາເຂົ້າສູ່ລະບົບໃໝ່");
+            return;
+        }
+
+        try {
+            // ເຕືອນໃຫ້ຮູ້ວ່າກຳລັງບັນທຶກ
+            const btn = document.getElementById('saveBtn'); // ປຸ່ມບັນທຶກຂອງທ່ານ
+            if (btn) btn.disabled = true;
+
+            // ບັນທຶກລົງ Firebase Realtime Database
+            await firebase.database().ref('users/' + phone).update({
+                name: name,
+                address: address
+            });
+
+            // ບັນທຶກລົງ localStorage ເພື່ອໃຊ້ງານຕໍ່
+            localStorage.setItem('user_name', name);
+            localStorage.setItem('user_address', address);
+
+            alert("✅ ບັນທຶກຂໍ້ມູນສຳເລັດ!");
+            
+            if (btn) btn.disabled = false;
+        } catch (error) {
+            console.error("Error:", error);
+            alert("❌ ບັນທຶກບໍ່ໄດ້: " + error.message);
+        }
+    }
   </script>
   <script src="ksd-common.js"></script>
 </body>
