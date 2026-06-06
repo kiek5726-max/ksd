@@ -735,20 +735,25 @@
     // ປ່ຽນ Object ຂໍ້ມູນໃຫ້ເປັນ Array
     const usersArray = Object.entries(users);
     
-    tbody.innerHTML = usersArray.map(([phone, u]) => `
+    // ແກ້ໄຂຟັງຊັນ renderUsersTable ໃນ admin.html
+function renderUsersTable(usersArray) {
+    const tbody = document.getElementById('admin-user-list'); // ແກ້ໃຫ້ຕົງກັບ ID ໃນ HTML
+    if(!tbody) return;
+    
+    tbody.innerHTML = usersArray.map(([key, u]) => `
         <tr>
             <td><strong>${u.name || 'ບໍ່ມີຊື່'}</strong></td>
-            <td>${phone}</td>
+            <td>${u.phone || 'ບໍ່ມີເບີ'}</td>
             <td>${u.age || '—'}</td>
             <td>${u.address || '—'}</td>
-            <td>${ADMIN_PHONES.includes(phone) ? '👑 Admin' : '👤 Member'}</td>
-            <td>${u.registeredAt || '—'}</td>
+            <td>${u.role || 'Member'}</td>
+            <td>${u.registeredAt || '-'}</td>
             <td>
-                <button class="btn btn-yellow" onclick="openEditUser('${phone}')">✏️ ແກ້ໄຂ</button>
+               <button class="btn btn-yellow" onclick="openEditUser('${u.phone || ''}')">✏️ ແກ້ໄຂ</button>
             </td>
         </tr>
     `).join('');
-});
+}
 
 </script>
 <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-app-compat.js"></script>
