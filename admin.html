@@ -722,20 +722,7 @@
   });
 
   // USERS
-  onValue(ref(db, 'users'), (snapshot) => {
-    const users = snapshot.val();
-    const tbody = document.getElementById('admin-user-list'); // ໃຊ້ ID ທີ່ຖືກຕ້ອງ
-    if (!tbody) return;
-
-    if (!users) {
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">ຍັງບໍ່ມີຂໍ້ມູນຜູ້ໃຊ້</td></tr>';
-        return;
-    }
-
-    // ປ່ຽນ Object ຂໍ້ມູນໃຫ້ເປັນ Array
-    const usersArray = Object.entries(users);
-    
-    // ແກ້ໄຂຟັງຊັນ renderUsersTable ໃນ admin.html
+  // ແກ້ໄຂຟັງຊັນ renderUsersTable ໃນ admin.html
 function renderUsersTable(usersArray) {
     const tbody = document.getElementById('admin-user-list'); // ແກ້ໃຫ້ຕົງກັບ ID ໃນ HTML
     if(!tbody) return;
