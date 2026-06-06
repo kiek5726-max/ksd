@@ -187,7 +187,6 @@
         </div>
       </div>
     </div>
-
     <!-- PRODUCTS -->
     <div id="section-products" class="admin-section">
       <div class="page-title">📦 ຈັດການສິນຄ້າ</div>
@@ -264,7 +263,8 @@
         </table>
       </div>
     </div>
-
+<div class="admin-panel">
+</div>
   </div><!-- end admin-main -->
 </div><!-- end admin-container -->
 
@@ -746,7 +746,43 @@ function renderUsersTable(usersArray) {
         </tr>
     `).join('');
 }
+async function uploadQR() {
+    const fileInput = document.getElementById('qrUpload');
+    const status = document.getElementById('uploadStatus');
+    const file = fileInput.files[0];
+
+    if (!file) {
+        alert("ກະລຸນາເລືອກຮູບກ່ອນ!");
+        return;
+    }
+
+    status.innerText = "ກຳລັງອັບໂຫລດ... ກະລຸນາລໍຖ້າ";
+
+    try {
+        // 1. ເຊື່ອມຕໍ່ Firebase Storage
+        const storageRef = firebase.storage().ref('settings/qrcode.png');
+        
+        // 2. ອັບໂຫລດຮູບ
+        const snapshot = await storageRef.put(file);
+        
+        // 3. ເອົາລິ້ງຮູບ (Download URL)
+        const downloadURL = await snapshot.ref.getDownloadURL();
+        
+        // 4. ບັນທຶກລິ້ງຮູບໄວ້ໃນ Realtime Database
+        await firebase.database().ref('settings/qr_url').set(downloadURL);
+        
+        status.innerText = "✅ ອັບໂຫລດສຳເລັດ!";
+        alert("ປ່ຽນ QR Code ຮຽບຮ້ອຍແລ້ວ!");
+        
+    } catch (error) {
+        console.error("Error:", error);
+        status.innerText = "❌ ເກີດຂໍ້ຜິດພາດ: " + error.message;
+    }
+}
 </script>
+<script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-storage-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-database-compat.js"></script>
 <script src="ksd-common.js"></script>
 </body>
 </html>

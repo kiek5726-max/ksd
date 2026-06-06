@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ຊຳລະເງິນ - KSD ກິ່ງສະດາ</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .payment-container { text-align: center; padding: 40px; background: #fff; border-radius: 12px; max-width: 400px; margin: 50px auto; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .qr-box img { width: 280px; border: 2px solid #eee; border-radius: 8px; }
+        .btn-chat { background-color: #25D366; color: white; padding: 12px 20px; text-decoration: none; border-radius: 6px; display: inline-block; margin-top: 15px; font-weight: bold; }
+        .btn-home { background-color: #008d13; color: white; padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer; margin-top: 20px; width: 100%; }
+    </style>
+</head>
+<body>
+
+<div class="payment-container">
+    <h2 style="color: #008d13;">PAYMENT</h2>
+    
+    <div class="qr-box">
+    
+<div class="bank-info-container" style="text-align: left; background: #f9f9f9; padding: 15px; border-radius: 8px; margin: 20px 0;">
+    <p><strong>ທະນາຄານ:</strong> <span id="bankName">Bcel One</span></p>
+    <p><strong>ຊື່ບັນຊີ:</strong> <span id="accountName">Soukpaserth Douangboupha</span></p>
+    <p><strong>ເລກບັນຊີ:</strong> <span id="accountNumber">610-5655-8895-56</span></p>
+</div>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js";
+
+    // ໃຊ້ Firebase Config ດຽວກັນກັບທີ່ທ່ານມີໃນ ksd-common.js
+    const firebaseConfig = {
+        databaseURL: 'https://ksd-kingsada-default-rtdb.firebaseio.com'
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // ດຶງຂໍ້ມູນຈາກ Path 'settings/bankInfo'
+    onValue(ref(db, 'settings/bankInfo'), (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+            document.getElementById('bankName').innerText = data.bankName;
+            document.getElementById('accountName').innerText = data.accountName;
+            document.getElementById('accountNumber').innerText = data.accountNumber;
+        }
+    });
+</script>
+    
+
+    <a href="https://wa.me/856205483745" class="btn-chat">💬 ແຊັດຫາ Admin </a>
+    
+    <button class="btn-home" onclick="window.location.href='cart.html'">✅ ກັບໄປໜ້າຫຼັກ</button>
+</div>
+
+<script>
+    // ດຶງຍອດເງິນຈາກ LocalStorage
+    const total = localStorage.getItem('cartTotal') || 0;
+    document.getElementById('total-price').innerText = Number(total).toLocaleString();
+</script>
+<script>
+    // ດຶງລິ້ງຮູບຈາກ Database ມາສະແດງ
+    firebase.database().ref('settings/payment_qr').on('value', snapshot => {
+    const data = snapshot.val();
+    if (data) {
+        document.getElementById('myQrImage').src = data.imageUrl; // ປ່ຽນ id ໃຫ້ຕົງກັບ tag <img> ຂອງທ່ານ
+    }
+});
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js";
+
+const database = getDatabase();
+const qrImage = document.getElementById('qrImage'); // ເອົາ ID ມາຈາກ img tag ຂອງທ່ານ
+
+// ຟັງການປ່ຽນແປງ
+onValue(ref(database, 'settings/qrCodeUrl'), (snapshot) => {
+    const url = snapshot.val();
+    if (url) {
+        qrImage.src = url; // ປ່ຽນຮູບທັນທີເມື່ອ Database ປ່ຽນ
+    }
+});
+</script>
+<script type="module">
+    // ນຳໃຊ້ Firebase ຈາກ library ທີ່ທ່ານໂຫຼດໄວ້ແລ້ວ
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js";
+
+    const db2 = getDatabase();
+    const bankRef = ref(db, 'settings/bankInfo');
+
+    onValue(bankRef, (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+            document.getElementById('bankName').innerText = data.bankName || '-';
+            document.getElementById('accountName').innerText = data.accountName || '-';
+            document.getElementById('accountNumber').innerText = data.accountNumber || '-';
+        }
+    });
+</script>
+</body>
+</html>
