@@ -1006,3 +1006,35 @@ function setupUserListener(db) {
         }
     });
 }
+// ວາງໄວ້ລຸ່ມສຸດຂອງໄຟລ໌ ksd-common.js ເລີຍ
+window.addToCart = function(id, name, price, image) {
+    console.log("ກຳລັງເພີ່ມສິນຄ້າ:", name);
+    
+    // 1. ດຶງກະຕ່າເກົ່າອອກມາ
+    let cart = JSON.parse(localStorage.getItem('ksd_cart')) || [];
+    
+    // 2. ກວດສອບວ່າມີສິນຄ້ານີ້ແລ້ວບໍ່
+    const existingIndex = cart.findIndex(i => String(i.id) === String(id));
+    
+    if (existingIndex > -1) {
+        cart[existingIndex].quantity = Number(cart[existingIndex].quantity) + 1;
+    } else {
+        cart.push({ 
+            id: String(id), 
+            name: name, 
+            price: Number(price), 
+            image: image || 'Image/KSD.svg', 
+            quantity: 1 
+        });
+    }
+    
+    // 3. ບັນທຶກລົງ localStorage
+    localStorage.setItem('ksd_cart', JSON.stringify(cart));
+    
+    // 4. ອັບເດດ UI
+    if (typeof updateCartBadge === 'function') {
+        updateCartBadge();
+    }
+    
+    showToast(`🛒 ເພີ່ມ "${name}" ເຂົ້າກະຕ່າສຳເລັດ!`);
+};
