@@ -698,60 +698,45 @@ function getProducts() {
   }
 }
 
-// --- ແກ້ໄຂຟັງຊັນ renderProducts ໃຫ້ຖືກຕ້ອງ ---
-async function renderProducts() {
+// --- renderProducts ---
+function renderProducts() {
     const grid = document.getElementById('dynamic-product-grid');
     if (!grid) {
         console.warn("ບໍ່ພົບ element id='dynamic-product-grid', ກຳລັງຂ້າມການ render...");
         return;
     }
 
-    // ດຶງຂໍ້ມູນຈາກ localStorage ທີ່ sync ມາຈາກ Firebase
-    const rawData = localStorage.getItem('backend_products');
-    if (!rawData) return;
+    const products = getProducts();
+    const lang = localStorage.getItem('ksd_lang') || 'lo';
+    const ui = UI_I18N[lang] || UI_I18N.lo;
 
-    const list = JSON.parse(rawData);
-    
-    grid.innerHTML = list.map(p => `
+    if (!products.length) {
+        grid.innerHTML = `<div class="product-empty">${ui.emptyProducts}</div>`;
+        return;
+    }
+
+    grid.innerHTML = products.map(p => `
         <div class="product-card">
             <div class="product-img">
-                <img src="${p.image || 'Image/KSD.svg'}" alt="${p.name || 'ສິນຄ້າ'}" onerror="this.src='Image/KSD.svg'">
+                <img src="${escapeAttr(p.image || 'Image/KSD.svg')}" alt="${escapeAttr(p.name)}" onerror="this.src='Image/KSD.svg'">
             </div>
             <div class="product-info">
-                <h3>${p.name || ''}</h3>
+                <h3>${escapeHtml(p.name)}</h3>
                 <p class="price">${Number(p.price || 0).toLocaleString()} ກີບ</p>
-                <p class="desc">${p.desc || ''}</p>
-                <button class="btn-buy" onclick="addToCart('${p.id}')">ເພີ່ມໃສ່ກະຕ່າ</button>
+                <p class="desc">${escapeHtml(p.desc)}</p>
+                <button class="btn-buy"
+                    data-id="${escapeAttr(String(p.id))}"
+                    data-name="${escapeAttr(p.name)}"
+                    data-price="${Number(p.price || 0)}"
+                    data-image="${escapeAttr(p.image || 'Image/KSD.svg')}"
+                >${ui.addCart}</button>
             </div>
         </div>
     `).join('');
 }
 
-// --- ແກ້ໄຂ Listener ໃຫ້ດຶງຈາກ 'products' ໂດຍກົງ ---
-function setupFirebaseListeners() {
-    // ດຶງຂໍ້ມູນສະເພາະ products
-    onValue(ref(db, 'products'), (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-            // ປ່ຽນ Object ເປັນ Array
-            const list = Object.entries(data).map(([k, v]) => ({
-                id: k,
-                ...v
-            })).filter(p => p.name);
-            
-            localStorage.setItem('backend_products', JSON.stringify(list));
-            console.log('✅ ສິນຄ້າຖືກ Update ຈາກ Firebase ແລ້ວ');
-            renderProducts(); // ສັ່ງ Render ທັນທີທີ່ຂໍ້ມູນມາ
-        }
-    });
-}
 
-// ເຮັດໃຫ້ທຸກຢ່າງເຮັດວຽກເມື່ອໜ້າເວັບໂຫຼດສຳເລັດ
-document.addEventListener('DOMContentLoaded', async () => {
-    await initializeFirebase(); 
-    setupFirebaseListeners();
-    renderProducts();
-});
+
 
 // ========== CART (ksd_cart key) ==========
 function addToCart(id, name, price, image) {
@@ -1006,35 +991,3 @@ function setupUserListener(db) {
         }
     });
 }
-// ວາງໄວ້ລຸ່ມສຸດຂອງໄຟລ໌ ksd-common.js ເລີຍ
-window.addToCart = function(id, name, price, image) {
-    console.log("ກຳລັງເພີ່ມສິນຄ້າ:", name);
-    
-    // 1. ດຶງກະຕ່າເກົ່າອອກມາ
-    let cart = JSON.parse(localStorage.getItem('ksd_cart')) || [];
-    
-    // 2. ກວດສອບວ່າມີສິນຄ້ານີ້ແລ້ວບໍ່
-    const existingIndex = cart.findIndex(i => String(i.id) === String(id));
-    
-    if (existingIndex > -1) {
-        cart[existingIndex].quantity = Number(cart[existingIndex].quantity) + 1;
-    } else {
-        cart.push({ 
-            id: String(id), 
-            name: name, 
-            price: Number(price), 
-            image: image || 'Image/KSD.svg', 
-            quantity: 1 
-        });
-    }
-    
-    // 3. ບັນທຶກລົງ localStorage
-    localStorage.setItem('ksd_cart', JSON.stringify(cart));
-    
-    // 4. ອັບເດດ UI
-    if (typeof updateCartBadge === 'function') {
-        updateCartBadge();
-    }
-    
-    showToast(`🛒 ເພີ່ມ "${name}" ເຂົ້າກະຕ່າສຳເລັດ!`);
-};
