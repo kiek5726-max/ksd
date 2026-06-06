@@ -722,63 +722,34 @@
   });
 
   // USERS
-  function setupUserListener(db) {
-    const { ref, onValue } = window.firebase.database; // ປັບຕາມ Library ທີ່ເຈົ້າໃຊ້
-    onValue(ref(db, 'users'), (snapshot) => {
-        const users = snapshot.val();
-        if (users) {
-            console.log("ພົບລາຍຊື່ລູກຄ້າ:", users);
-            // ສັ່ງໃຫ້ Render ຕາຕະລາງລູກຄ້າ (ຖ້າເຈົ້າມີຟັງຊັນນີ້)
-            if (typeof renderUsersTable === 'function') {
-                renderUsersTable(Object.entries(users));
-            }
-        }
-    });
-}
-function renderUsersTable(usersArray) {
-    const tbody = document.getElementById('users-table-body');
-    if(!tbody) return;
-    tbody.innerHTML = usersArray.map(([key, u]) => `
-        <tr>
-            <td>${u.name || 'ບໍ່ມີຊື່'}</td>
-            <td>${u.email || 'ບໍ່ມີເມວ'}</td>
-            <td>${u.phone || 'ບໍ່ມີເບີ'}</td>
-        </tr>
-    `).join('');
-}
-async function uploadQR() {
-    const fileInput = document.getElementById('qrUpload');
-    const status = document.getElementById('uploadStatus');
-    const file = fileInput.files[0];
+  onValue(ref(db, 'users'), (snapshot) => {
+    const users = snapshot.val();
+    const tbody = document.getElementById('admin-user-list'); // ໃຊ້ ID ທີ່ຖືກຕ້ອງ
+    if (!tbody) return;
 
-    if (!file) {
-        alert("ກະລຸນາເລືອກຮູບກ່ອນ!");
+    if (!users) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">ຍັງບໍ່ມີຂໍ້ມູນຜູ້ໃຊ້</td></tr>';
         return;
     }
 
-    status.innerText = "ກຳລັງອັບໂຫລດ... ກະລຸນາລໍຖ້າ";
+    // ປ່ຽນ Object ຂໍ້ມູນໃຫ້ເປັນ Array
+    const usersArray = Object.entries(users);
+    
+    tbody.innerHTML = usersArray.map(([phone, u]) => `
+        <tr>
+            <td><strong>${u.name || 'ບໍ່ມີຊື່'}</strong></td>
+            <td>${phone}</td>
+            <td>${u.age || '—'}</td>
+            <td>${u.address || '—'}</td>
+            <td>${ADMIN_PHONES.includes(phone) ? '👑 Admin' : '👤 Member'}</td>
+            <td>${u.registeredAt || '—'}</td>
+            <td>
+                <button class="btn btn-yellow" onclick="openEditUser('${phone}')">✏️ ແກ້ໄຂ</button>
+            </td>
+        </tr>
+    `).join('');
+});
 
-    try {
-        // 1. ເຊື່ອມຕໍ່ Firebase Storage
-        const storageRef = firebase.storage().ref('settings/qrcode.png');
-        
-        // 2. ອັບໂຫລດຮູບ
-        const snapshot = await storageRef.put(file);
-        
-        // 3. ເອົາລິ້ງຮູບ (Download URL)
-        const downloadURL = await snapshot.ref.getDownloadURL();
-        
-        // 4. ບັນທຶກລິ້ງຮູບໄວ້ໃນ Realtime Database
-        await firebase.database().ref('settings/qr_url').set(downloadURL);
-        
-        status.innerText = "✅ ອັບໂຫລດສຳເລັດ!";
-        alert("ປ່ຽນ QR Code ຮຽບຮ້ອຍແລ້ວ!");
-        
-    } catch (error) {
-        console.error("Error:", error);
-        status.innerText = "❌ ເກີດຂໍ້ຜິດພາດ: " + error.message;
-    }
-}
 </script>
 <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-storage-compat.js"></script>
