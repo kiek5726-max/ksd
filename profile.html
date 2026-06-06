@@ -69,10 +69,11 @@
       <label>ເບີໂທ</label>
       <input type="tel" id="phoneInput" placeholder="020 XXXXXXXX">
     </div>
-    <div class="input-group">
-      <label>ທີ່ຢູ່</label>
-      <input type="text" id="addressInput" placeholder="ບ້ານ, ເມືອງ, ແຂວງ...">
-    </div>
+    <<div class="auth-input-group">
+  <label for="userAddress">ທີ່ຢູ່</label>
+  <input type="text" id="userAddress" placeholder="ທີ່ຢູ່ຂອງທ່ານ...">
+  <button type="button" onclick="getLocation()" class="btn-location">📍 ຈັບໂລເຄຊັ່ນອັດຕະໂນມັດ</button>
+</div>
     <div class="input-group">
       <label>ຍົດ</label>
       <select id="roleInput">
@@ -167,6 +168,30 @@
         ? '<option value="admin">👑 Admin</option>'
         : '<option value="member">👤 ສະມາຊິກ (Member)</option>';
     });
+    function getLocation() {
+    const addressInput = document.getElementById('userAddress');
+    
+    if (navigator.geolocation) {
+        addressInput.value = "ກຳລັງຊອກຫາໂລເຄຊັ່ນ...";
+        
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                
+                // ແປງຄ່າພິກັດເປັນລິ້ງ Google Maps ເພື່ອໃຫ້ງ່າຍຕໍ່ການນຳທາງ
+                const locationLink = `https://www.google.com/maps?q=${lat},${lng}`;
+                addressInput.value = locationLink;
+            },
+            (error) => {
+                alert("ບໍ່ສາມາດດຶງໂລເຄຊັ່ນໄດ້, ກະລຸນາເປີດ GPS ຫຼື ອະນຸຍາດໃຫ້ເຂົ້າເຖິງສະຖານທີ່.");
+                addressInput.value = "";
+            }
+        );
+    } else {
+        alert("Browser ຂອງທ່ານບໍ່ຮອງຮັບລະບົບຈັບໂລເຄຊັ່ນ.");
+    }
+}
   </script>
   <script src="ksd-common.js"></script>
 </body>
