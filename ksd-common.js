@@ -901,28 +901,21 @@ async function syncUsersToFirebase(users) {
   if (!firebaseDb) return;
   try {
     const { ref, set } = await import('https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js');
-    if (users && (Array.isArray(users) ? users.length > 0 : Object.keys(users).length > 0)) {
     await set(ref(firebaseDb, 'users'), users);
-    console.log("✅ Sync ຂໍ້ມູນ Users ສຳເລັດ");
-
-} else {
-    // 3. ແຈ້ງເຕືອນໃນ Console ຖ້າຂໍ້ມູນບໍ່ຖືກຕ້ອງ ເພື່ອປ້ອງກັນການລຶບຂໍ້ມູນໃນ Firebase
-    console.warn("⚠️ ຂໍ້ມູນ Users ບໍ່ຖືກຕ້ອງ ຫຼື ຫວ່າງເປົ່າ, ຍົກເລີກການ Sync ໄປ Firebase");
+    console.log('✅ Users synced to Firebase');
+  } catch (e) {
+    console.warn('Firebase users sync failed:', e.message);
   }
 }
 
 // ========== INIT ON LOAD ==========
-document.addEventListener('click', (e) => {
-    // ກວດສອບກ່ອນວ່າ e.target ເປັນ Element ທີ່ແທ້ຈິງບໍ່
-    const target = e.target;
-    if (target instanceof HTMLElement) {
-        const btn = target.closest('.btn-buy');
-        if (btn) {
-            // ດຽວນີ້ btn ຈະເປັນ HTMLElement ທີ່ຖືກຕ້ອງ
-            addToCart(btn.dataset.id, btn.dataset.name, btn.dataset.price, btn.dataset.image);
-        }
-    }
+document.addEventListener('click', e => {
+  const btn = e.target.closest('.btn-buy');
+  if (btn) {
+    addToCart(btn.dataset.id, btn.dataset.name, btn.dataset.price, btn.dataset.image);
+  }
 });
+
 document.addEventListener('DOMContentLoaded', () => {
   initAuthStore();
 
