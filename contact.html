@@ -6,6 +6,60 @@
   <title>ຕິດຕໍ່ - ກິ່ງສະດາ</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@300;400;500;700&display=swap">
+  <style>
+    .contact-wrapper {
+      max-width: 520px;
+      margin: 0 auto;
+    }
+    .contact-info-box {
+      background: white;
+      padding: 30px;
+      border-radius: 14px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+      margin-bottom: 28px;
+      font-size: 16px;
+      line-height: 2.4;
+    }
+    .contact-info-box p { margin: 0; }
+
+    /* ===== Contact Buttons ===== */
+    .contact-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .contact-btn {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 18px 22px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-size: 17px;
+      font-weight: 600;
+      color: white;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+      transition: transform 0.2s, box-shadow 0.2s, filter 0.2s;
+    }
+    .contact-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 22px rgba(0,0,0,0.2);
+      filter: brightness(1.06);
+    }
+    .contact-btn:active { transform: translateY(0); }
+
+    .btn-facebook { background: linear-gradient(135deg, #1877F2, #0d5ec9); }
+    .btn-phone    { background: linear-gradient(135deg, #008d13, #005a0d); }
+    .btn-whatsapp { background: linear-gradient(135deg, #25D366, #128C7E); }
+
+    .contact-btn .btn-icon {
+      font-size: 28px;
+      flex-shrink: 0;
+    }
+    .contact-btn .btn-text { display: flex; flex-direction: column; line-height: 1.3; }
+    .contact-btn .btn-label { font-size: 13px; opacity: 0.85; font-weight: 400; }
+    .contact-btn .btn-value { font-size: 16px; font-weight: 700; }
+  </style>
 </head>
 <body>
 
@@ -26,14 +80,53 @@
   <main class="main-content">
     <div class="section-title">
       <h2>ຊ່ອງທາງການຕິດຕໍ່</h2>
-      <p>ຫາກທ່ານມີຂໍ້ສົງໄສ ຫຼື ຕ້ອງການສອບຖາມ ຕິດຕໍ່ພວກເຮົາໄດ້ເລີຍ</p>
+      <p>ເລືອກຊ່ອງທາງທີ່ສະດວກ ຕິດຕໍ່ພວກເຮົາໄດ້ທັນທີ</p>
     </div>
 
-    <div style="background:white; padding:40px; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.04); max-width:600px; margin:0 auto; line-height:2.4; font-size:16px;">
-      <p>📍 <strong>ສະຖານທີ່ຕັ້ງ:</strong> ນະຄອນຫຼວງວຽງຈັນ, ສປປ ລາວ</p>
-      <p>📞 <strong>ເບີໂທ:</strong> +856 20 548 35745</p>
-      <p>✉️ <strong>ອີເມວ:</strong> contact@kingsada-logistics.com</p>
-      <p>🌐 <strong>Facebook:</strong> ກິ່ງສະດາ ຂົນສົ່ງ ແລະ ການຄ້າ</p>
+    <div class="contact-wrapper">
+
+      <!-- Info box -->
+      <div class="contact-info-box">
+        <p>📍 <strong>ສະຖານທີ່ຕັ້ງ:</strong> ນະຄອນຫຼວງວຽງຈັນ, ສປປ ລາວ</p>
+        <p>⏰ <strong>ເວລາເຮັດວຽກ:</strong> ຈັນ – ເສົາ, 08:00 – 17:00</p>
+      </div>
+
+      <!-- Buttons -->
+      <div class="contact-buttons">
+
+        <!-- Facebook -->
+        <a href="https://www.facebook.com/ksdlaos"
+           target="_blank" rel="noopener"
+           class="contact-btn btn-facebook">
+          <span class="btn-icon">📘</span>
+          <span class="btn-text">
+            <span class="btn-label">ຕິດຕໍ່ຜ່ານ</span>
+            <span class="btn-value">Facebook — ກິ່ງສະດາ ຂົນສົ່ງ ແລະ ການຄ້າ</span>
+          </span>
+        </a>
+
+        <!-- Phone -->
+        <a href="tel:+8562054835745"
+           class="contact-btn btn-phone">
+          <span class="btn-icon">📞</span>
+          <span class="btn-text">
+            <span class="btn-label">ໂທຫາ</span>
+            <span class="btn-value">+856 20 548 35745</span>
+          </span>
+        </a>
+
+        <!-- WhatsApp -->
+        <a href="https://wa.me/8562054835745"
+           target="_blank" rel="noopener"
+           class="contact-btn btn-whatsapp">
+          <span class="btn-icon">💬</span>
+          <span class="btn-text">
+            <span class="btn-label">ແຊັດຜ່ານ</span>
+            <span class="btn-value">WhatsApp — +856 20 548 35745</span>
+          </span>
+        </a>
+
+      </div>
     </div>
   </main>
 
@@ -60,7 +153,6 @@
       <p>&copy; 2026 ພັດທະນາໂດຍ ນ້ອງນັກສຶກສາ. All Rights Reserved.</p>
     </div>
   </footer>
-
 
   <script src="ksd-common.js"></script>
 </body>

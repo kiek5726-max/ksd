@@ -155,22 +155,11 @@
 
 <script>
 function goToPayment() {
-    // 1. ເອົາຄ່າຈາກຍອດລວມ (ປ້ອງກັນ Error ຖ້າຫາ id ບໍ່ພົບ)
-    const totalElement = document.getElementById('cart-total');
-    let total = 0;
+    // ຄຳນວນຍອດລວມໂດຍກົງຈາກ ksd_cart (ຮັບປະກັນຖືກຕ້ອງ 100%)
+    const cart = JSON.parse(localStorage.getItem('ksd_cart') || '[]');
+    const total = cart.reduce((sum, item) => sum + (Number(item.price) * Number(item.quantity || 1)), 0);
     
-    if (totalElement) {
-        // ເອົາເຄື່ອງໝາຍຈຸດອອກ ແລະ ປ່ຽນເປັນຕົວເລກ
-        total = totalElement.innerText.replace(/[^0-9]/g, '');
-    }
-    
-    // 2. ລ້າງຄ່າເກົ່າທີ່ອາດຈະເສຍຫາຍໃນ localStorage
-    localStorage.removeItem('cartTotal');
-    
-    // 3. ບັນທຶກຄ່າໃໝ່
-    localStorage.setItem('cartTotal', total);
-    
-    // 4. ບັງຄັບປ່ຽນໜ້າ
+    localStorage.setItem('cartTotal', String(total));
     console.log("ກຳລັງໄປໜ້າຊຳລະເງິນ, ຍອດເງິນ:", total);
     window.location.href = 'payment.html';
 }
