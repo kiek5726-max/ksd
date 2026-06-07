@@ -92,7 +92,8 @@
 
 <script>
 (function() {
-    // ===== ຍອດຊຳລະ =====
+    // ອ່ານຍອດ: ໃຊ້ cartTotal ທີ່ cart.html save ໄວ້
+    // ຖ້າບໍ່ມີ ຫຼື ເປັນ 0 ໃຫ້ຄຳນວນໃໝ່ຈາກ ksd_cart
     let total = Number(localStorage.getItem('cartTotal') || 0);
     if (!total) {
         const cart = JSON.parse(localStorage.getItem('ksd_cart') || '[]');
@@ -103,38 +104,32 @@
         document.getElementById('total-box').style.display = 'block';
     }
 
-    // ===== ສະແດງ QR (URL ຫຼື base64) =====
-    function applyQR(src) {
-        if (!src) return;
+    // Load QR image from localStorage (set by admin)
+    function applyQR(base64) {
+        if (!base64) return;
         const img = document.getElementById('qrImage');
-        img.src = src;
+        img.src = base64;
         img.style.display = 'block';
         document.getElementById('noQrPlaceholder').style.display = 'none';
     }
 
-    // ໂຫລດ QR URL ຈາກ localStorage (ບໍ່ສ່ຽງ limit)
-    // ໃຊ້ URL ກ່ອນ, ຖ້າບໍ່ມີ fallback ໄປ base64 (ກໍລະນີເກົ່າ)
-    const cachedUrl = localStorage.getItem('ksd_payment_qr_url');
-    if (cachedUrl) {
-        applyQR(cachedUrl);
-    } else {
-        // base64 fallback (ອາດໃຊ້ບໍ່ໄດ້ຖ້າໃຫຍ່ເກີນ)
-        const b64 = localStorage.getItem('ksd_payment_qr');
-        if (b64 && b64.length < 2 * 1024 * 1024) applyQR(b64);
-    }
-
-    // ===== ຂໍ້ມູນທະນາຄານ =====
+    // Load bank info from localStorage (set by admin)
     function applyBankInfo(info) {
         if (!info) return;
         if (info.bankName)      document.getElementById('bankName').innerText = info.bankName;
         if (info.accountName)   document.getElementById('accountName').innerText = info.accountName;
         if (info.accountNumber) document.getElementById('accountNumber').innerText = info.accountNumber;
     }
-    try { applyBankInfo(JSON.parse(localStorage.getItem('ksd_bank_info') || 'null')); } catch {}
+
+    // Read from localStorage first (instant, no Firebase needed)
+    applyQR(localStorage.getItem('ksd_payment_qr'));
+    try {
+        applyBankInfo(JSON.parse(localStorage.getItem('ksd_bank_info') || 'null'));
+    } catch {}
 })();
 </script>
 
-<!-- Firebase: ດຶງ QR URL + ຂໍ້ມູນທະນາຄານ real-time -->
+<!-- Firebase module: sync QR + bank info in real time -->
 <script type="module">
     import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
     import { getDatabase, ref, onValue } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js';
@@ -151,29 +146,19 @@
     const app = getApps().length ? getApps()[0] : initializeApp(cfg);
     const db  = getDatabase(app);
 
-    // ===== QR Code: ໃຊ້ imageUrl (URL ສັ້ນ) ຈາກ Storage =====
+    // QR Code from Firebase
     onValue(ref(db, 'settings/paymentQR'), (snap) => {
         const data = snap.val();
-        if (!data) return;
-
-        // imageUrl = URL ຈາກ Firebase Storage (ໃໝ່)
-        // imageBase64 = base64 (ເກົ່າ, fallback)
-        const url = data.imageUrl || null;
-        const b64 = data.imageBase64 || null;
-        const src = url || (b64 && b64.length < 2*1024*1024 ? b64 : null);
-
-        if (!src) return;
-
-        // Cache URL ໃສ່ localStorage
-        if (url) localStorage.setItem('ksd_payment_qr_url', url);
-
-        const img = document.getElementById('qrImage');
-        img.src = src;
-        img.style.display = 'block';
-        document.getElementById('noQrPlaceholder').style.display = 'none';
+        if (data && data.imageBase64) {
+            localStorage.setItem('ksd_payment_qr', data.imageBase64);
+            const img = document.getElementById('qrImage');
+            img.src = data.imageBase64;
+            img.style.display = 'block';
+            document.getElementById('noQrPlaceholder').style.display = 'none';
+        }
     });
 
-    // ===== ຂໍ້ມູນທະນາຄານ =====
+    // Bank info from Firebase
     onValue(ref(db, 'settings/bankInfo'), (snap) => {
         const data = snap.val();
         if (!data) return;

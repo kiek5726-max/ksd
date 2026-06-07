@@ -319,19 +319,7 @@
     </div>
 </div><!-- end admin-main -->
 </div><!-- end admin-container -->
-<script>
-    // ເມື່ອຟອມຖືກສົ່ງ
-    document.querySelector('form').addEventListener('submit', function() {
-        document.getElementById('loading-text').style.display = 'block'; // ສະແດງຂໍ້ຄວາມກຳລັງໂຫຼດ
-    });
 
-    // ຟັງຊັນນີ້ຈະຖືກເອີ້ນໂດຍ upload.php ເມື່ອເຮັດວຽກສຳເລັດ
-    function uploadSuccess(imageUrl) {
-        document.getElementById('loading-text').style.display = 'none'; // ເຊື່ອງຂໍ້ຄວາມກຳລັງໂຫຼດ
-        document.getElementById('qr-preview').src = imageUrl; // ສະແດງຮູບໃໝ່
-        alert("ອັບໂຫຼດສຳເລັດ!");
-    }
-</script>
 <!-- ===== ksd-common.js MUST load first ===== -->
 <script src="ksd-common.js"></script>
 
@@ -692,27 +680,24 @@
   function saveQRCode() {
     const file = document.getElementById('qr-file-input').files[0];
     if (!file) { alert('ກະລຸນາເລືອກຮູບ QR Code ກ່ອນ'); return; }
-    if (typeof window._fbUploadQR !== 'function') {
-      alert('Firebase ຍັງໂຫລດບໍ່ທັນ, ກະລຸນາລໍຖ້າສັກຄູ່ແລ້ວລອງໃໝ່');
-      return;
-    }
-    const btn = document.querySelector('button[onclick="saveQRCode()"]');
-    if (btn) { btn.disabled = true; btn.textContent = '⏳ ກຳລັງອັບໂຫລດ...'; }
-    window._fbUploadQR(file)
-      .then(url => {
-        // Show current preview
-        const cur = document.getElementById('current-qr-preview');
-        cur.src = url; cur.style.display = 'block';
-        document.getElementById('no-qr-msg').style.display = 'none';
-        // Save URL (tiny) to localStorage
-        localStorage.setItem('ksd_payment_qr_url', url);
-        localStorage.removeItem('ksd_payment_qr'); // clear old base64 if any
-        const msg = document.getElementById('qr-save-msg');
-        msg.style.display = 'inline';
-        setTimeout(() => msg.style.display = 'none', 3000);
-      })
-      .catch(err => { console.error(err); alert('ອັບໂຫລດຜິດພາດ: ' + err.message); })
-      .finally(() => { if (btn) { btn.disabled = false; btn.textContent = '💾 ບັນທຶກ QR Code ໄປໜ້າຊຳລະເງິນ'; } });
+    const r = new FileReader();
+    r.onload = e => {
+      const base64 = e.target.result;
+      // Save to localStorage (payment.html will read this)
+      localStorage.setItem('ksd_payment_qr', base64);
+      // If Firebase is available, sync there too
+      if (typeof window._fbSaveQR === 'function') window._fbSaveQR(base64);
+      // Update preview
+      const cur = document.getElementById('current-qr-preview');
+      cur.src = base64;
+      cur.style.display = 'block';
+      document.getElementById('no-qr-msg').style.display = 'none';
+      // Show success
+      const msg = document.getElementById('qr-save-msg');
+      msg.style.display = 'inline';
+      setTimeout(() => msg.style.display = 'none', 3000);
+    };
+    r.readAsDataURL(file);
   }
 
   function saveBankInfo() {
@@ -729,11 +714,11 @@
   }
 
   function loadSettingsPage() {
-    // Load current QR URL from localStorage (prefer URL over base64)
-    const qrUrl = localStorage.getItem('ksd_payment_qr_url') || localStorage.getItem('ksd_payment_qr');
-    if (qrUrl && qrUrl.length < 5*1024*1024) { // skip if huge base64
+    // Load current QR from localStorage
+    const qr = localStorage.getItem('ksd_payment_qr');
+    if (qr) {
       const cur = document.getElementById('current-qr-preview');
-      if (cur) { cur.src = qrUrl; cur.style.display = 'block'; }
+      if (cur) { cur.src = qr; cur.style.display = 'block'; }
       const noMsg = document.getElementById('no-qr-msg');
       if (noMsg) noMsg.style.display = 'none';
     }
@@ -800,16 +785,10 @@
 
 
   // ---- QR Code & Bank Info Firebase sync ----
-  // Upload file to Firebase Storage, save download URL to Database
-  window._fbUploadQR = async (file) => {
-    const { getStorage, ref: sRef, uploadBytes, getDownloadURL } = await import('https://www.gstatic.com/firebasejs/9.22.0/firebase-storage.js');
-    const storage = getStorage(app);
-    const fileRef = sRef(storage, 'settings/payment_qr.png');
-    await uploadBytes(fileRef, file, { contentType: file.type || 'image/png' });
-    const url = await getDownloadURL(fileRef);
-    // Save URL (not base64) to Realtime Database
-    await set(ref(db, 'settings/paymentQR'), { imageUrl: url, updatedAt: Date.now() });
-    return url;
+  window._fbSaveQR = async (base64Data) => {
+    try {
+      await set(ref(db, 'settings/paymentQR'), { imageBase64: base64Data, updatedAt: Date.now() });
+    } catch(e) { console.warn('Firebase QR sync failed:', e); }
   };
 
   window._fbSaveBankInfo = async (info) => {
@@ -818,17 +797,16 @@
     } catch(e) { console.warn('Firebase bank info sync failed:', e); }
   };
 
-  // Load QR URL from Firebase and keep in sync
+  // Load QR from Firebase on page load and keep in sync
   onValue(ref(db, 'settings/paymentQR'), (snap) => {
     const data = snap.val();
-    const url = data && (data.imageUrl || data.imageBase64);
-    if (!url) return;
-    // Only cache if it is a URL (not a huge base64)
-    if (url.startsWith('http')) localStorage.setItem('ksd_payment_qr_url', url);
-    const cur = document.getElementById('current-qr-preview');
-    if (cur) { cur.src = url; cur.style.display = 'block'; }
-    const noMsg = document.getElementById('no-qr-msg');
-    if (noMsg) noMsg.style.display = 'none';
+    if (data && data.imageBase64) {
+      localStorage.setItem('ksd_payment_qr', data.imageBase64);
+      const cur = document.getElementById('current-qr-preview');
+      if (cur) { cur.src = data.imageBase64; cur.style.display = 'block'; }
+      const noMsg = document.getElementById('no-qr-msg');
+      if (noMsg) noMsg.style.display = 'none';
+    }
   });
 
   onValue(ref(db, 'settings/bankInfo'), (snap) => {
