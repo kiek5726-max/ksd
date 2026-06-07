@@ -82,7 +82,7 @@
     </div>
 
     <a href="https://wa.me/8562054835745" class="btn-chat">
-        💬 ແຊັດຫາ Admin 
+        💬 ແຊັດຫາ Admin ເພື່ອຢືນຢັນ
     </a>
 
     <button class="btn-home" onclick="window.history.back()">
@@ -92,8 +92,7 @@
 
 <script>
 (function() {
-    // ອ່ານຍອດ: ໃຊ້ cartTotal ທີ່ cart.html save ໄວ້
-    // ຖ້າບໍ່ມີ ຫຼື ເປັນ 0 ໃຫ້ຄຳນວນໃໝ່ຈາກ ksd_cart
+    // ===== ຍອດຊຳລະ =====
     let total = Number(localStorage.getItem('cartTotal') || 0);
     if (!total) {
         const cart = JSON.parse(localStorage.getItem('ksd_cart') || '[]');
@@ -104,32 +103,38 @@
         document.getElementById('total-box').style.display = 'block';
     }
 
-    // Load QR image from localStorage (set by admin)
-    function applyQR(base64) {
-        if (!base64) return;
+    // ===== ສະແດງ QR (URL ຫຼື base64) =====
+    function applyQR(src) {
+        if (!src) return;
         const img = document.getElementById('qrImage');
-        img.src = base64;
+        img.src = src;
         img.style.display = 'block';
         document.getElementById('noQrPlaceholder').style.display = 'none';
     }
 
-    // Load bank info from localStorage (set by admin)
+    // ໂຫລດ QR URL ຈາກ localStorage (ບໍ່ສ່ຽງ limit)
+    // ໃຊ້ URL ກ່ອນ, ຖ້າບໍ່ມີ fallback ໄປ base64 (ກໍລະນີເກົ່າ)
+    const cachedUrl = localStorage.getItem('ksd_payment_qr_url');
+    if (cachedUrl) {
+        applyQR(cachedUrl);
+    } else {
+        // base64 fallback (ອາດໃຊ້ບໍ່ໄດ້ຖ້າໃຫຍ່ເກີນ)
+        const b64 = localStorage.getItem('ksd_payment_qr');
+        if (b64 && b64.length < 2 * 1024 * 1024) applyQR(b64);
+    }
+
+    // ===== ຂໍ້ມູນທະນາຄານ =====
     function applyBankInfo(info) {
         if (!info) return;
         if (info.bankName)      document.getElementById('bankName').innerText = info.bankName;
         if (info.accountName)   document.getElementById('accountName').innerText = info.accountName;
         if (info.accountNumber) document.getElementById('accountNumber').innerText = info.accountNumber;
     }
-
-    // Read from localStorage first (instant, no Firebase needed)
-    applyQR(localStorage.getItem('ksd_payment_qr'));
-    try {
-        applyBankInfo(JSON.parse(localStorage.getItem('ksd_bank_info') || 'null'));
-    } catch {}
+    try { applyBankInfo(JSON.parse(localStorage.getItem('ksd_bank_info') || 'null')); } catch {}
 })();
 </script>
 
-<!-- Firebase module: sync QR + bank info in real time -->
+<!-- Firebase: ດຶງ QR URL + ຂໍ້ມູນທະນາຄານ real-time -->
 <script type="module">
     import { initializeApp, getApps } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
     import { getDatabase, ref, onValue } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js';
@@ -146,19 +151,29 @@
     const app = getApps().length ? getApps()[0] : initializeApp(cfg);
     const db  = getDatabase(app);
 
-    // QR Code from Firebase
+    // ===== QR Code: ໃຊ້ imageUrl (URL ສັ້ນ) ຈາກ Storage =====
     onValue(ref(db, 'settings/paymentQR'), (snap) => {
         const data = snap.val();
-        if (data && data.imageBase64) {
-            localStorage.setItem('ksd_payment_qr', data.imageBase64);
-            const img = document.getElementById('qrImage');
-            img.src = data.imageBase64;
-            img.style.display = 'block';
-            document.getElementById('noQrPlaceholder').style.display = 'none';
-        }
+        if (!data) return;
+
+        // imageUrl = URL ຈາກ Firebase Storage (ໃໝ່)
+        // imageBase64 = base64 (ເກົ່າ, fallback)
+        const url = data.imageUrl || null;
+        const b64 = data.imageBase64 || null;
+        const src = url || (b64 && b64.length < 2*1024*1024 ? b64 : null);
+
+        if (!src) return;
+
+        // Cache URL ໃສ່ localStorage
+        if (url) localStorage.setItem('ksd_payment_qr_url', url);
+
+        const img = document.getElementById('qrImage');
+        img.src = src;
+        img.style.display = 'block';
+        document.getElementById('noQrPlaceholder').style.display = 'none';
     });
 
-    // Bank info from Firebase
+    // ===== ຂໍ້ມູນທະນາຄານ =====
     onValue(ref(db, 'settings/bankInfo'), (snap) => {
         const data = snap.val();
         if (!data) return;
