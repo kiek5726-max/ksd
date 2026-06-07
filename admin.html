@@ -319,7 +319,19 @@
     </div>
 </div><!-- end admin-main -->
 </div><!-- end admin-container -->
+<script>
+    // ເມື່ອຟອມຖືກສົ່ງ
+    document.querySelector('form').addEventListener('submit', function() {
+        document.getElementById('loading-text').style.display = 'block'; // ສະແດງຂໍ້ຄວາມກຳລັງໂຫຼດ
+    });
 
+    // ຟັງຊັນນີ້ຈະຖືກເອີ້ນໂດຍ upload.php ເມື່ອເຮັດວຽກສຳເລັດ
+    function uploadSuccess(imageUrl) {
+        document.getElementById('loading-text').style.display = 'none'; // ເຊື່ອງຂໍ້ຄວາມກຳລັງໂຫຼດ
+        document.getElementById('qr-preview').src = imageUrl; // ສະແດງຮູບໃໝ່
+        alert("ອັບໂຫຼດສຳເລັດ!");
+    }
+</script>
 <!-- ===== ksd-common.js MUST load first ===== -->
 <script src="ksd-common.js"></script>
 
