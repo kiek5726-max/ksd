@@ -106,7 +106,7 @@
     window.IS_ADMIN_PAGE = true;
 </script>
 </head>
-<body>
+<body data-admin-page="true">
 
 <!-- Mobile sidebar toggle -->
 <button class="sidebar-toggle-fab" onclick="document.querySelector('.admin-sidebar').classList.toggle('open')">☰</button>
@@ -653,6 +653,12 @@
   }
 
   // ===== SLIP MODAL =====
+  function openSlipModal(btn) {
+    const slip = btn.getAttribute('data-slip');
+    if (!slip) return;
+    document.getElementById('slipModalImg').src = slip;
+    document.getElementById('slipModal').classList.add('open');
+  }
   function openSlipByKey(key) {
     const data = window._fbOrdersData;
     if (!data || !data[key] || !data[key].slipImage) return;
@@ -861,7 +867,9 @@
       const isDelivered = o.status === 'delivered';
       const badge = isDelivered ? '<span class="badge-delivered">✅ ສົ່ງແລ້ວ</span>' : '<span class="badge-pending">⏳ ລໍຖ້າ</span>';
       const deliverBtn = !isDelivered ? `<button class="btn btn-green" onclick="fbMarkDelivered('${esc2(key)}')" style="padding:4px 9px;font-size:12px;">📦 ສົ່ງແລ້ວ</button>` : `<button class="btn btn-gray" disabled style="padding:4px 9px;font-size:12px;">✅ ສົ່ງແລ້ວ</button>`;
-      const slipBtn = o.slipImage ? `<button class="btn btn-blue" onclick="openSlipByKey('${esc2(key)}')" style="padding:4px 9px;font-size:12px;">👁 ໃບບິນ</button>` : '<span style="color:#94a3b8;font-size:12px;">—</span>';
+      const slipBtn = o.slipImage
+        ? `<button class="btn btn-blue" onclick="openSlipModal(this)" data-slip="${o.slipImage.replace(/"/g,'&quot;')}" style="padding:4px 9px;font-size:12px;">👁 ໃບບິນ</button>`
+        : '<span style="color:#94a3b8;font-size:12px;">—</span>';
       return `
       <tr>
         <td style="white-space:nowrap;">${esc2(o.date||'—')}</td>

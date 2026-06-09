@@ -149,26 +149,15 @@
       </table>
     </div>
 
-    <div class="checkout-section"><button onclick="goToPayment()" class="btn-pay" style="background:#008d13; color:white; padding:15px; border:none; width:100%; cursor:pointer;">
-    ຊ່ອງທາງຊຳລະເງິນ
-</button>
-
-<script>
-function goToPayment() {
-    // ຄຳນວນຍອດລວມໂດຍກົງຈາກ ksd_cart (ຮັບປະກັນຖືກຕ້ອງ 100%)
-    const cart = JSON.parse(localStorage.getItem('ksd_cart') || '[]');
-    const total = cart.reduce((sum, item) => sum + (Number(item.price) * Number(item.quantity || 1)), 0);
-    
-    localStorage.setItem('cartTotal', String(total));
-    console.log("ກຳລັງໄປໜ້າຊຳລະເງິນ, ຍອດເງິນ:", total);
-    window.location.href = 'payment.html';
-}
-</script>
+    <div class="checkout-section">
       <h3>ສະຫຼຸບຍອດເງິນ</h3> 
       <div class="total-row">
         <span>ຍອດລວມທັງໝົດ:</span>
         <span id="cart-page-total" class="total-amount">0 ກີບ</span>
       </div>
+      <button onclick="goToPayment()" style="background:#008d13; color:white; padding:15px; border:none; width:100%; cursor:pointer; border-radius:8px; font-size:15px; font-weight:bold; font-family:'Noto Sans Lao',sans-serif; margin-bottom:18px;">
+        ຊ່ອງທາງຊຳລະເງິນ
+      </button>
 
       <h3>📋 ຂໍ້ມູນການຈັດສົ່ງ</h3>
       <form id="orderForm" style="margin-top:15px;" onsubmit="submitOrder(event)">
@@ -185,7 +174,7 @@ function goToPayment() {
           <textarea id="custAddress" rows="3" required placeholder="ບ້ານ, ເມືອງ, ແຂວງ..."></textarea>
         </div>
         <div class="form-group">
-          <label>📎 ແນບໃບບິນການໂອນເງິນ :</label>
+          <label>📎 ແນບໃບບິນການໂອນເງິນ <span style="color:#ff4757; font-size:13px;">* (ບັງຄັບ)</span> :</label>
           <input type="file" id="slipImage" accept="image/*" style="background:#1e293b; color:#cbd5e1; border:1px solid #475569; border-radius:6px; padding:8px; width:100%; box-sizing:border-box;">
           <div id="slipPreview" style="margin-top:8px; display:none;">
             <img id="slipPreviewImg" src="" style="max-width:100%; max-height:160px; border-radius:8px; border:1px solid #475569;">
@@ -205,6 +194,14 @@ function goToPayment() {
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;');
+    }
+
+    // ===== GO TO PAYMENT =====
+    function goToPayment() {
+      const cart = JSON.parse(localStorage.getItem('ksd_cart') || '[]');
+      const total = cart.reduce((sum, item) => sum + (Number(item.price) * Number(item.quantity || 1)), 0);
+      localStorage.setItem('cartTotal', String(total));
+      window.location.href = 'payment.html';
     }
 
     // ===== DISPLAY CART =====
@@ -273,6 +270,7 @@ function goToPayment() {
     // ===== SLIP PREVIEW =====
     document.getElementById('slipImage')?.addEventListener('change', function() {
       const file = this.files[0];
+      this.style.border = '1px solid #475569'; // reset border
       if (!file) { document.getElementById('slipPreview').style.display = 'none'; return; }
       const reader = new FileReader();
       reader.onload = e => {
@@ -284,80 +282,79 @@ function goToPayment() {
 
     // ===== SUBMIT ORDER =====
     async function submitOrder(e) {
-  e.preventDefault();
-  const cart = JSON.parse(localStorage.getItem('ksd_cart')) || [];
-  if (cart.length === 0) return alert('ກະຕ່າຫວ່າງເປົ່າ!');
+      e.preventDefault();
+      const cart = JSON.parse(localStorage.getItem('ksd_cart')) || [];
+      if (cart.length === 0) return alert('ກະຕ່າຫວ່າງເປົ່າ!');
 
-  const btn = document.querySelector('.btn-confirm');
-  btn.disabled = true;
-  btn.textContent = 'ກຳລັງສົ່ງ...';
+      // ກວດວ່າໄດ້ແນບ slip ຫຼືຍັງ
+      const slipCheck = document.getElementById('slipImage')?.files[0];
+      if (!slipCheck) {
+        alert('⚠️ ກະລຸນາແນບໃບບິນການໂອນເງິນກ່ອນຢືນຢັນ!');
+        document.getElementById('slipImage').focus();
+        document.getElementById('slipImage').style.border = '2px solid #ff4757';
+        return;
+      }
 
-  // ອ່ານໃບບິນ slip ຖ້າມີ
-  let slipBase64 = '';
-  const slipFile = document.getElementById('slipImage')?.files[0];
-  if (slipFile) {
-    slipBase64 = await new Promise(resolve => {
-      const r = new FileReader();
-      r.onload = ev => resolve(ev.target.result);
-      r.readAsDataURL(slipFile);
-    });
-  }
+      const btn = document.querySelector('.btn-confirm');
+      btn.disabled = true;
+      btn.textContent = 'ກຳລັງສົ່ງ...';
 
-  const now = new Date();
-  const dateStr = now.toLocaleDateString('lo-LA') + ' ' + now.toLocaleTimeString('lo-LA', { hour: '2-digit', minute: '2-digit' });
+      // ອ່ານໃບບິນ slip ຖ້າມີ
+      let slipBase64 = '';
+      const slipFile = document.getElementById('slipImage')?.files[0];
+      if (slipFile) {
+        slipBase64 = await new Promise(resolve => {
+          const r = new FileReader();
+          r.onload = ev => resolve(ev.target.result);
+          r.readAsDataURL(slipFile);
+        });
+      }
 
-  const orderData = {
-    date: dateStr,
-    customer: document.getElementById('custName').value,
-    phone: String(document.getElementById('custPhone').value).replace(/\s/g, ''),
-    address: document.getElementById('custAddress').value,
-    total: cart.reduce((s, i) => s + (Number(i.price) * Number(i.quantity)), 0),
-    items: cart.map(i => `${i.name} x${i.quantity}`).join(', '),
-    status: 'pending',
-    slipImage: slipBase64,
-  };
+      const now = new Date();
+      const dateStr = now.toLocaleDateString('lo-LA') + ' ' + now.toLocaleTimeString('lo-LA', { hour: '2-digit', minute: '2-digit' });
 
-  try {
-    const { initializeApp, getApps } = await import('https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js');
-    const { getDatabase, ref, push } = await import('https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js');
+      const orderData = {
+        date: dateStr,
+        customer: document.getElementById('custName').value,
+        phone: String(document.getElementById('custPhone').value).replace(/\s/g, ''),
+        address: document.getElementById('custAddress').value,
+        total: cart.reduce((s, i) => s + (Number(i.price) * Number(i.quantity)), 0),
+        items: cart.map(i => `${i.name} x${i.quantity}`).join(', '),
+        status: 'pending',
+        slipImage: slipBase64,
+      };
 
-    const FIREBASE_CONFIG = {
-      apiKey: 'AIzaSyB_JcmHbO_kOy9v3rvstiqDoIgBYndRfZI',
-      authDomain: 'ksd-kingsada.firebaseapp.com',
-      databaseURL: 'https://ksd-kingsada-default-rtdb.firebaseio.com',
-      projectId: 'ksd-kingsada',
-      storageBucket: 'ksd-kingsada.firebasestorage.app',
-      messagingSenderId: '984977062231',
-      appId: '1:984977062231:web:39ebfc780ebc875dec2612',
-    };
+      // ບັນທຶກ localStorage ສະເໝີ (ທັງ online ທັງ offline)
+      function saveLocalAndRedirect() {
+        const localOrders = JSON.parse(localStorage.getItem('backend_orders') || '[]');
+        localOrders.push(orderData);
+        localStorage.setItem('backend_orders', JSON.stringify(localOrders));
+        localStorage.removeItem('ksd_cart');
+        if (typeof updateCartBadge === 'function') updateCartBadge();
+        alert('✅ ສັ່ງຊື້ສຳເລັດ! ທາງທີມງານຈະຕິດຕໍ່ກັບ \n📞 ' + orderData.phone);
+        window.location.href = 'history.html';
+      }
 
-    const app = getApps().length ? getApps()[0] : initializeApp(FIREBASE_CONFIG);
-    const db = getDatabase(app);
-    await push(ref(db, 'orders'), orderData);
+      try {
+        // ໃຊ້ firebaseDb ທີ່ ksd-common.js ສ້າງໄວ້ແລ້ວ (ກັນ duplicate app)
+        const db = (typeof firebaseDb !== 'undefined' && firebaseDb) ? firebaseDb : null;
 
-    // ບັນທຶກລົງ localStorage ດ້ວຍ (offline fallback)
-    const localOrders = JSON.parse(localStorage.getItem('backend_orders') || '[]');
-    localOrders.push(orderData);
-    localStorage.setItem('backend_orders', JSON.stringify(localOrders));
-
-    localStorage.removeItem('ksd_cart');
-    if (typeof updateCartBadge === 'function') updateCartBadge();
-    alert('✅ ສັ່ງຊື້ສຳເລັດ! ທາງທີມງານຈະຕິດຕໍ່ກັບ \n📞 ' + orderData.phone);
-    window.location.href = 'history.html';
-  } catch (error) {
-    console.error('Firebase error:', error);
-    // fallback: save local only
-    const localOrders = JSON.parse(localStorage.getItem('backend_orders') || '[]');
-    localOrders.push(orderData);
-    localStorage.setItem('backend_orders', JSON.stringify(localOrders));
-    alert('✅ ສັ່ງຊື້ສຳເລັດ (offline mode)');
-    localStorage.removeItem('ksd_cart');
-    window.location.href = 'history.html';
-  } finally {
-    btn.disabled = false;
-    btn.textContent = '🛍️ ຢືນຢັນການສັ່ງຊື້';
-  }
-}
+        if (db) {
+          const { ref, push } = await import('https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js');
+          await push(ref(db, 'orders'), orderData);
+          console.log('✅ Order saved to Firebase');
+        } else {
+          console.warn('Firebase not ready, saving locally only');
+        }
+        saveLocalAndRedirect();
+      } catch (error) {
+        console.error('Firebase error:', error);
+        saveLocalAndRedirect(); // ຍັງໄປ history.html ສະເໝີ
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '🛍️ ຢືນຢັນການສັ່ງຊື້';
+      }
+    }
 
     document.addEventListener('DOMContentLoaded', () => {
       displayCartPage();

@@ -659,7 +659,8 @@ function logoutUser() {
 }
 
 function guardAdminAccess() {
-  if (document.body.dataset.adminPage !== 'true') return;
+  const isAdminPage = document.body.dataset.adminPage === 'true' || window.IS_ADMIN_PAGE === true;
+  if (!isAdminPage) return;
   if (!isAdmin()) {
     alert('⛔ ທ່ານບໍ່ມີສິດເຂົ້າເຖິງໜ້າ Admin');
     window.location.href = isLoggedIn() ? 'index.html' : 'login.html';
