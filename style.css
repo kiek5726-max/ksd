@@ -106,7 +106,7 @@ body {
 .banner-section {
   position: relative;
   height: 450px;
-  background-image: url('Image/KSD.png');
+  background-image: url('Image/');
   background-size: cover;
   background-position: center;
   display: flex;
