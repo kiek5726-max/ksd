@@ -693,12 +693,16 @@ function getProducts() {
 }
 
 // --- renderProducts ---
+// Tracks last rendered product list to avoid unnecessary full re-renders
+let _lastProductHash = '';
+
+function _hashProducts(products) {
+  return products.map(p => p.id + ':' + p.name + ':' + p.price).join('|');
+}
+
 function renderProducts() {
     const grid = document.getElementById('dynamic-product-grid');
-    if (!grid) {
-        console.warn("ບໍ່ພົບ element id='dynamic-product-grid', ກຳລັງຂ້າມການ render...");
-        return;
-    }
+    if (!grid) return;
 
     const products = getProducts();
     const lang = localStorage.getItem('ksd_lang') || 'lo';
@@ -707,8 +711,20 @@ function renderProducts() {
 
     if (!products.length) {
         grid.innerHTML = `<div class="product-empty">${ui.emptyProducts}</div>`;
+        _lastProductHash = '';
         return;
     }
+
+    const newHash = _hashProducts(products);
+    const gridAlreadyBuilt = grid.querySelectorAll('.product-card').length > 0;
+
+    if (gridAlreadyBuilt && newHash === _lastProductHash) {
+        // ສິນຄ້າບໍ່ໄດ້ປ່ຽນ — ອັບເດດສະຖານະປຸ່ມທຸກໆ ອັນໂດຍບໍ່ re-render
+        syncWishlistButtons(wishlist, ui);
+        return;
+    }
+
+    _lastProductHash = newHash;
 
     grid.innerHTML = products.map(p => {
         const saved = wishlist.some(w => String(w.id) === String(p.id));
@@ -730,6 +746,20 @@ function renderProducts() {
             </div>
         </div>`;
     }).join('');
+}
+
+// ອັບເດດສະຖານະປຸ່ມໃຫ້ຕົງກັບ wishlist ໂດຍບໍ່ສ້າງ DOM ໃໝ່
+function syncWishlistButtons(wishlist, ui) {
+    if (!wishlist) wishlist = getWishlist();
+    if (!ui) {
+        const lang = localStorage.getItem('ksd_lang') || 'lo';
+        ui = UI_I18N[lang] || UI_I18N.lo;
+    }
+    document.querySelectorAll('.btn-interested').forEach(btn => {
+        const saved = wishlist.some(w => String(w.id) === String(btn.dataset.id));
+        btn.classList.toggle('saved', saved);
+        btn.textContent = saved ? (ui.interestedDone || '❤️ ສົນໃຈແລ້ວ') : (ui.interested || 'ສົນໃຈ');
+    });
 }
 
 
@@ -760,13 +790,8 @@ function toggleWishlist(id, name, price, image) {
   }
   localStorage.setItem('ksd_wishlist', JSON.stringify(list));
   updateWishlistBadge();
-  // update button state in grid
-  const btn = document.querySelector(`.btn-interested[data-id="${id}"]`);
-  if (btn) {
-    const saved = list.some(i => String(i.id) === String(id));
-    btn.classList.toggle('saved', saved);
-    btn.textContent = saved ? (ui.interestedDone || '❤️ ສົນໃຈແລ້ວ') : (ui.interested || 'ສົນໃຈ');
-  }
+  // sync ທຸກປຸ່ມໃຫ້ຖືກຕ້ອງ — ປ້ອງກັນ Firebase re-render ລ້ວງຫາຫຼັງ
+  syncWishlistButtons(list, ui);
 }
 
 // Legacy stub — no-op (cart removed)
@@ -830,9 +855,10 @@ async function setupFirebaseListeners() {
     const { ref, onValue } = await import('https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js');
 
     // Real-time product updates — ອັບເດດສະເພາະຖ້າ Firebase ມີຂໍ້ມູນ (ກັນ overwrite ດ້ວຍຂໍ້ມູນຫວ່າງ)
+    let _renderDebounce = null;
     onValue(ref(firebaseDb, 'products'), snapshot => {
       const data = snapshot.val();
-      if (!data || !Object.keys(data).length) return; // Firebase ຫວ່າງ — ຮັກສາ localStorage ໄວ້
+      if (!data || !Object.keys(data).length) return;
       const fbProducts = Object.entries(data)
         .map(([key, val]) => normalizeProduct({
           id: isNaN(Number(key)) ? key : Number(key),
@@ -842,10 +868,14 @@ async function setupFirebaseListeners() {
           image: val.image,
         }))
         .filter(Boolean);
-      if (!fbProducts.length) return; // parse ອອກມາຫວ່າງ — ບໍ່ overwrite
+      if (!fbProducts.length) return;
       localStorage.setItem('backend_products', JSON.stringify(fbProducts));
-      renderProducts();
-      console.log('✅ Products updated from Firebase');
+      // debounce: ລໍຖ້າ 300ms ຫຼັງຈາກ Firebase ສ່ົງຄ່າສຸດທ້າຍ ກ່ອນ render
+      clearTimeout(_renderDebounce);
+      _renderDebounce = setTimeout(() => {
+        renderProducts();
+        console.log('✅ Products updated from Firebase');
+      }, 300);
     }, error => {
       console.warn('Firebase products listener error:', error.message);
     });
