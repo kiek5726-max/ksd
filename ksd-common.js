@@ -117,10 +117,10 @@ function initDragBtn() {
 
   document.addEventListener('touchmove', e => {
     if (!isDragging) return;
-    e.preventDefault();
+    // preventDefault ສະເພາະຕອນ drag ປຸ່ມລອຍ — ບໍ່ block touch events ອື່ນ
     const t = e.touches[0];
     moveDrag(t.clientX, t.clientY);
-  }, { passive: false });
+  }, { passive: true });
 
   document.addEventListener('touchend', () => {
     endDrag();
@@ -951,12 +951,16 @@ async function syncUsersToFirebase(users) {
 }
 
 // ========== INIT ON LOAD ==========
-document.addEventListener('click', e => {
+// ໃຊ້ທັງ click (desktop) ແລະ touchend (mobile) — ກັນ passive/preventDefault ຂອງ drag btn block
+function _handleInterestedBtn(e) {
   const btn = e.target.closest('.btn-interested');
-  if (btn) {
-    toggleWishlist(btn.dataset.id, btn.dataset.name, btn.dataset.price, btn.dataset.image);
-  }
-});
+  if (!btn) return;
+  e.preventDefault();
+  e.stopPropagation();
+  toggleWishlist(btn.dataset.id, btn.dataset.name, btn.dataset.price, btn.dataset.image);
+}
+document.addEventListener('click', _handleInterestedBtn);
+document.addEventListener('touchend', _handleInterestedBtn, { passive: false });
 
 document.addEventListener('DOMContentLoaded', () => {
   initAuthStore();
