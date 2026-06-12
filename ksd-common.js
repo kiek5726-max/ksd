@@ -951,16 +951,24 @@ async function syncUsersToFirebase(users) {
 }
 
 // ========== INIT ON LOAD ==========
-// ໃຊ້ທັງ click (desktop) ແລະ touchend (mobile) — ກັນ passive/preventDefault ຂອງ drag btn block
-function _handleInterestedBtn(e) {
+// ກັນ double-fire: touchend + click ຈະ fire ທັງ 2 ໃນໂທລະສັບ → toggle 2 ຄັ້ງ → ກັບໄປຄ່າເດີມ
+let _touchFired = false;
+
+document.addEventListener('touchend', e => {
   const btn = e.target.closest('.btn-interested');
   if (!btn) return;
-  e.preventDefault();
-  e.stopPropagation();
+  e.preventDefault(); // ກັນ click follow-up
+  _touchFired = true;
   toggleWishlist(btn.dataset.id, btn.dataset.name, btn.dataset.price, btn.dataset.image);
-}
-document.addEventListener('click', _handleInterestedBtn);
-document.addEventListener('touchend', _handleInterestedBtn, { passive: false });
+  setTimeout(() => { _touchFired = false; }, 400);
+}, { passive: false });
+
+document.addEventListener('click', e => {
+  if (_touchFired) return; // touch ເຮັດໄປແລ້ວ — skip click
+  const btn = e.target.closest('.btn-interested');
+  if (!btn) return;
+  toggleWishlist(btn.dataset.id, btn.dataset.name, btn.dataset.price, btn.dataset.image);
+});
 
 document.addEventListener('DOMContentLoaded', () => {
   initAuthStore();
