@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="lo">
 <head>
+</button>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin - KSD ກິ່ງສະດາ</title>
@@ -159,7 +160,9 @@
     <div class="admin-nav" id="adminNav">
       <button data-section="dashboard" class="active">📊 ແຜງຄວບຄຸມ</button>
       <button data-section="products">📦 ຈັດການສິນຄ້າ</button>
+      <button data-section="orders">📜 ລາຍການສັ່ງຊື້</button>
       <button data-section="users">👥 ຜູ້ໃຊ້ລົງທະບຽນ</button>
+      <button data-section="settings">⚙️ ຕັ້ງຄ່າ QR Code</button>
       <button onclick="window.location.href='index.html'">🌐 ໜ້າເວັບ</button>
     </div>
   </div>
@@ -507,7 +510,7 @@
   }
 
   // ===== PRODUCTS CRUD =====
-  async function saveProduct(e) {
+  function saveProduct(e) {
     e.preventDefault();
     const id    = document.getElementById('product-id').value;
     const name  = document.getElementById('product-name').value.trim();
@@ -518,35 +521,21 @@
     if (!name) { alert('ກະລຸນາຕື່ມຊື່ສິນຄ້າ'); return; }
     if (isNaN(price) || price < 0) { alert('ລາຄາບໍ່ຖືກຕ້ອງ'); return; }
 
-    const btn = e.target.querySelector('button[type="submit"]');
-    if (btn) { btn.disabled = true; btn.textContent = 'ກຳລັງບັນທຶກ...'; }
-
     let products = getProducts();
     if (id) {
       const idx = products.findIndex(p => String(p.id) === String(id));
       if (idx >= 0) products[idx] = normProd({ id: products[idx].id, name, price, desc, image });
+      alert('✅ ແກ້ໄຂສິນຄ້າສຳເລັດ!');
     } else {
       const maxId = products.reduce((m, p) => Math.max(m, Number(p.id) || 0), 0);
       const created = normProd({ id: maxId + 1, name, price, desc, image });
       if (created) products.push(created);
+      alert('✅ ເພີ່ມສິນຄ້າໃໝ່ຮຽບຮ້ອຍ!');
     }
     products = products.map(normProd).filter(Boolean);
     localStorage.setItem('backend_products', JSON.stringify(products));
-
-    try {
-      if (typeof window._adminSyncProducts === 'function') {
-        await window._adminSyncProducts(products);
-        alert(id ? '✅ ແກ້ໄຂສິນຄ້າ ແລະ sync Firebase ສຳເລັດ!' : '✅ ເພີ່ມສິນຄ້າໃໝ່ ແລະ sync Firebase ສຳເລັດ!');
-      } else {
-        alert(id ? '✅ ແກ້ໄຂສິນຄ້າສຳເລັດ (offline)' : '✅ ເພີ່ມສິນຄ້າສຳເລັດ (offline)');
-      }
-    } catch(err) {
-      console.error('Firebase sync error:', err);
-      alert('⚠️ ບັນທຶກ localStorage ສຳເລັດ ແຕ່ Firebase ບໍ່ໄດ້ຮັບ: ' + err.message);
-    } finally {
-      if (btn) { btn.disabled = false; btn.textContent = '💾 ບັນທຶກ'; }
-    }
-
+    // sync to Firebase
+    if (typeof window._adminSyncProducts === 'function') window._adminSyncProducts(products);
     clearProductForm();
     renderProductsTable();
   }
@@ -834,17 +823,24 @@
   });
 
   // ---- real-time listeners ----
-  // PRODUCTS — listen ສະເພາະ /products ບໍ່ແມ່ນ root
-  onValue(ref(db, 'products'), (snapshot) => {
+  // PRODUCTS
+  onValue(ref(db, '/'), (snapshot) => {
     const data = snapshot.val();
-    if (!data) return;
-    const list = Object.entries(data)
-      .map(([k, v]) => ({ id: isNaN(Number(k)) ? k : Number(k), name: v.name, price: v.price, desc: v.desc, image: v.image }))
-      .filter(p => p.name);
-    if (!list.length) return;
-    localStorage.setItem('backend_products', JSON.stringify(list));
-    if (typeof renderProductsTable === 'function') renderProductsTable();
-  });
+    if (data) {
+        // ປ່ຽນຂໍ້ມູນໃຫ້ເປັນ List ເພື່ອສະແດງໃນຕາຕະລາງ
+        // (ອັນນີ້ແມ່ນ Logic ທີ່ມີຢູ່ແລ້ວຂອງເຈົ້າ)
+        const list = Object.entries(data)
+            .filter(([k, v]) => typeof v === 'object' && v.name)
+            .map(([k, v]) => ({ id: k, ...v }));
+
+        localStorage.setItem('backend_products', JSON.stringify(list));
+
+        // ຖ້າຢູ່ໜ້າ Admin, ໃຫ້ມັນສັ່ງ Render ໃໝ່ທັນທີ
+        if (typeof renderProductsTable === 'function') {
+            renderProductsTable();
+        }
+    }
+});
 
   // ORDERS
   onValue(ref(db, 'orders'), snap => {
