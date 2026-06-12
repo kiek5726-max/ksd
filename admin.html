@@ -162,7 +162,6 @@
       <button data-section="products">📦 ຈັດການສິນຄ້າ</button>
       <button data-section="orders">📜 ລາຍການສັ່ງຊື້</button>
       <button data-section="users">👥 ຜູ້ໃຊ້ລົງທະບຽນ</button>
-      <button data-section="settings">⚙️ ຕັ້ງຄ່າ QR Code</button>
       <button onclick="window.location.href='index.html'">🌐 ໜ້າເວັບ</button>
     </div>
   </div>
@@ -266,60 +265,6 @@
     </div>
 <div class="admin-panel">
 </div>
-  
-    <!-- SETTINGS - QR CODE -->
-    <div id="section-settings" class="admin-section">
-      <div class="page-title">⚙️ ຕັ້ງຄ່າ QR Code ຊຳລະເງິນ</div>
-
-      <div class="card">
-        <h3 style="margin-bottom:18px;color:#005304;">📷 ອັບໂຫລດຮູບ QR Code ໃໝ່</h3>
-
-        <div style="text-align:center;margin-bottom:20px;">
-          <p style="color:#64748b;font-size:14px;margin-bottom:10px;">QR Code ປັດຈຸບັນ:</p>
-          <img id="current-qr-preview" src="" alt="QR Code"
-               style="max-width:220px;border:2px dashed #cbd5e1;border-radius:10px;padding:8px;display:none;">
-          <p id="no-qr-msg" style="color:#94a3b8;font-size:14px;">ຍັງບໍ່ມີ QR Code</p>
-        </div>
-
-        <div class="form-group">
-          <label>📁 ເລືອກຮູບ QR Code (PNG, JPG)</label>
-          <input type="file" id="qr-file-input" class="form-control" accept="image/*" onchange="previewQR()">
-        </div>
-        <div id="qr-new-preview-box" style="text-align:center;margin:16px 0;display:none;">
-          <p style="color:#64748b;font-size:13px;margin-bottom:8px;">ຮູບທີ່ຈະອັບໂຫລດ:</p>
-          <img id="qr-new-preview" src="" alt="new QR"
-               style="max-width:220px;border:2px solid #16a34a;border-radius:10px;padding:8px;">
-        </div>
-
-        <button class="btn btn-green" onclick="saveQRCode()" style="padding:12px 28px;font-size:15px;">
-          💾 ບັນທຶກ QR Code ໄປໜ້າຊຳລະເງິນ
-        </button>
-        <span id="qr-save-msg" style="margin-left:14px;color:#16a34a;font-weight:600;display:none;">✅ ບັນທຶກສຳເລັດ!</span>
-      </div>
-
-      <div class="card" style="margin-top:20px;">
-        <h3 style="margin-bottom:18px;color:#005304;">🏦 ຂໍ້ມູນບັນຊີທະນາຄານ</h3>
-        <div class="form-group">
-          <label>ຊື່ທະນາຄານ</label>
-          <input type="text" id="bank-name-input" class="form-control" placeholder="Bcel One...">
-        </div>
-        <div class="form-group">
-          <label>ຊື່ບັນຊີ</label>
-          <input type="text" id="bank-account-name" class="form-control" placeholder="ຊື່ເຈົ້າຂອງບັນຊີ...">
-        </div>
-        <div class="form-group">
-          <label>ເລກບັນຊີ</label>
-          <input type="text" id="bank-account-number" class="form-control" placeholder="XXX-XXXX-XXXX-XX">
-        </div>
-        <button class="btn btn-blue" onclick="saveBankInfo()" style="padding:10px 24px;">
-          💾 ບັນທຶກຂໍ້ມູນທະນາຄານ
-        </button>
-        <span id="bank-save-msg" style="margin-left:14px;color:#16a34a;font-weight:600;display:none;">✅ ບັນທຶກສຳເລັດ!</span>
-      </div>
-    </div>
-</div><!-- end admin-main -->
-</div><!-- end admin-container -->
-
 <!-- ===== ksd-common.js MUST load first ===== -->
 <script src="ksd-common.js"></script>
 
