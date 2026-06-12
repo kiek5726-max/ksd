@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ລາຍການທີ່ສົນໃຈ - KSD ກິ່ງສະດາ</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@300;400;500;700&display=swap">
+  <style>
+    .wishlist-wrap {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+    }
+    .wishlist-wrap h1 {
+      color: #004d17;
+      font-size: 26px;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+    .wishlist-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 20px;
+    }
+    .wishlist-card {
+      background: #fff;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .wishlist-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+    .wishlist-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+    .wishlist-card-info {
+      padding: 16px;
+    }
+    .wishlist-card-info h3 {
+      font-size: 15px;
+      color: #1e293b;
+      margin-bottom: 6px;
+    }
+    .wishlist-card-info .price {
+      color: #008d13;
+      font-weight: 700;
+      font-size: 16px;
+      margin-bottom: 12px;
+    }
+    .btn-remove {
+      width: 100%;
+      padding: 9px;
+      background: #fff0f3;
+      border: 1.5px solid #e11d48;
+      color: #e11d48;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: 'Noto Sans Lao', sans-serif;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+    .btn-remove:hover {
+      background: #fecdd3;
+    }
+    .empty-msg {
+      text-align: center;
+      color: #94a3b8;
+      padding: 60px 20px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    }
+    .empty-msg p { font-size: 16px; margin-top: 10px; }
+    .back-btn {
+      display: inline-block;
+      margin-bottom: 28px;
+      padding: 10px 20px;
+      background-color: #004d17;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: 'Noto Sans Lao', sans-serif;
+      font-size: 14px;
+      text-decoration: none;
+    }
+    .back-btn:hover { background-color: #003311; }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-container">
+      <div class="logo"><h2>KSD<span>ກິ່ງສະດາ</span></h2></div>
+      <nav class="nav-menu">
+        <ul>
+          <li><a href="index.html">ໜ້າຫຼັກ</a></li>
+          <li><a href="products.html">ສິນຄ້າ</a></li>
+          <li><a href="services.html">ບໍລິການ</a></li>
+          <li><a href="about.html">ກ່ຽວກັບເຮົາ</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <div class="wishlist-wrap">
+    <a href="index.html" class="back-btn">⬅️ ກັບໜ້າຫຼັກ</a>
+    <h1>❤️ ລາຍການທີ່ສົນໃຈ</h1>
+    <div id="wishlist-container"></div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-about">
+        <h3>ກ່ຽວກັບໂຄງການ</h3>
+        <p>ເວັບໄຊທ໌ນີ້ເປັນສ່ວນໜຶ່ງຂອງວິຊາຮຽນ ພັດທະນາຂຶ້ນມາເພື່ອທົດສອບ Responsive Design.</p>
+      </div>
+      <div class="footer-team">
+        <h3>DEV</h3>
+        <div class="team-grid">
+          <div class="member">
+            <img src="Image/Prosli.jpeg" alt="Soukpasert" class="profile-avatar" onerror="this.style.display='none'">
+            <div class="member-info">
+              <p class="name">ທ້າວ ສຸກປະເສີດ ດວງບຸຜາ</p>
+              <p class="role">ເບີໂທ: +856 20 548 35745</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 ພັດທະນາໂດຍ ນ້ອງນັກສຶກສາ. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <script src="ksd-common.js"></script>
+  <script>
+    function renderWishlistPage() {
+      const container = document.getElementById('wishlist-container');
+      const list = JSON.parse(localStorage.getItem('ksd_wishlist') || '[]');
+
+      if (!list.length) {
+        container.innerHTML = `
+          <div class="empty-msg">
+            <div style="font-size:48px;">💔</div>
+            <p>ຍັງບໍ່ມີລາຍການທີ່ສົນໃຈ</p>
+            <a href="products.html" style="display:inline-block; margin-top:16px; color:#008d13; font-weight:600; text-decoration:none;">ເລືອກດູສິນຄ້າ →</a>
+          </div>`;
+        return;
+      }
+
+      const grid = document.createElement('div');
+      grid.className = 'wishlist-grid';
+
+      list.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'wishlist-card';
+        card.innerHTML = `
+          <img src="${escapeAttr(item.image || 'Image/KSD.svg')}" alt="${escapeAttr(item.name)}" onerror="this.src='Image/KSD.svg'">
+          <div class="wishlist-card-info">
+            <h3>${escapeHtml(item.name)}</h3>
+            <p class="price">${Number(item.price || 0).toLocaleString()} ກີບ</p>
+            <button class="btn-remove" onclick="removeFromWishlist('${String(item.id).replace(/'/g,"\\'")}')">
+              💔 ລຶບອອກ
+            </button>
+          </div>`;
+        grid.appendChild(card);
+      });
+
+      container.innerHTML = '';
+      container.appendChild(grid);
+    }
+
+    function removeFromWishlist(id) {
+      let list = JSON.parse(localStorage.getItem('ksd_wishlist') || '[]');
+      list = list.filter(i => String(i.id) !== String(id));
+      localStorage.setItem('ksd_wishlist', JSON.stringify(list));
+      if (typeof updateWishlistBadge === 'function') updateWishlistBadge();
+      renderWishlistPage();
+    }
+
+    document.addEventListener('DOMContentLoaded', renderWishlistPage);
+  </script>
+
+</body>
+</html>

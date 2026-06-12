@@ -209,20 +209,31 @@ body {
   line-height: 1.6;
   margin-bottom: 16px;
 }
-.btn-buy {
+.btn-interested {
   width: 100%;
   padding: 10px;
   background-color: #f1f5f9;
-  border: none;
-  color: #292929;
+  border: 1.5px solid #e2e8f0;
+  color: #475569;
   font-weight: 600;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s;
+  font-family: 'Noto Sans Lao', sans-serif;
+  font-size: 14px;
 }
-.btn-buy:hover {
-  background-color: #125800;
-  color: #ffffff;
+.btn-interested:hover {
+  background-color: #fff0f3;
+  border-color: #e11d48;
+  color: #e11d48;
+}
+.btn-interested.saved {
+  background-color: #fff0f3;
+  border-color: #e11d48;
+  color: #e11d48;
+}
+.btn-interested.saved:hover {
+  background-color: #fecdd3;
 }
 
 /* --- Footer --- */
@@ -592,14 +603,14 @@ body {
   font-size: 14px;
 }
 
-.cart-badge {
+.wishlist-badge {
   display: inline-block;
   min-width: 18px;
   height: 18px;
   line-height: 18px;
   padding: 0 5px;
   margin-left: 6px;
-  background: #ef4444;
+  background: #e11d48;
   color: #fff;
   font-size: 11px;
   font-weight: 700;
@@ -608,7 +619,7 @@ body {
   vertical-align: middle;
 }
 
-.sidebar-menu-links a.cart-link {
+.sidebar-menu-links a.wishlist-link {
   display: flex;
   align-items: center;
   justify-content: space-between;

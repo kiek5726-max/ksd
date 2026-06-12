@@ -160,9 +160,7 @@
     <div class="admin-nav" id="adminNav">
       <button data-section="dashboard" class="active">📊 ແຜງຄວບຄຸມ</button>
       <button data-section="products">📦 ຈັດການສິນຄ້າ</button>
-      <button data-section="orders">📜 ລາຍການສັ່ງຊື້</button>
       <button data-section="users">👥 ຜູ້ໃຊ້ລົງທະບຽນ</button>
-      <button data-section="settings">⚙️ ຕັ້ງຄ່າ QR Code</button>
       <button onclick="window.location.href='index.html'">🌐 ໜ້າເວັບ</button>
     </div>
   </div>
@@ -868,7 +866,7 @@
       const badge = isDelivered ? '<span class="badge-delivered">✅ ສົ່ງແລ້ວ</span>' : '<span class="badge-pending">⏳ ລໍຖ້າ</span>';
       const deliverBtn = !isDelivered ? `<button class="btn btn-green" onclick="fbMarkDelivered('${esc2(key)}')" style="padding:4px 9px;font-size:12px;">📦 ສົ່ງແລ້ວ</button>` : `<button class="btn btn-gray" disabled style="padding:4px 9px;font-size:12px;">✅ ສົ່ງແລ້ວ</button>`;
       const slipBtn = o.slipImage
-        ? `<button class="btn btn-blue" onclick="openSlipByKey('${esc2(key)}')" style="padding:4px 9px;font-size:12px;">👁 ໃບບິນ</button>`
+        ? `<button class="btn btn-blue" onclick="openSlipModal(this)" data-slip="${o.slipImage.replace(/"/g,'&quot;')}" style="padding:4px 9px;font-size:12px;">👁 ໃບບິນ</button>`
         : '<span style="color:#94a3b8;font-size:12px;">—</span>';
       return `
       <tr>

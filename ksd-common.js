@@ -185,8 +185,7 @@ function injectSharedUI() {
         </div>
         <div class="sidebar-menu-links">
           <a href="profile.html">👤 ຂໍ້ມູນສ່ວນຕົວ</a>
-          <a href="history.html" id="history-menu">📋 ປະຫວັດສັ່ງຊື້</a>
-          <a href="cart.html" class="cart-nav-link">🛒 ກະຕ່າສິນຄ້າ</a>
+          <a href="wishlist.html" class="wishlist-nav-link">❤️ ລາຍການທີ່ສົນໃຈ</a>
           <a href="#" onclick="openPasswordModal(); return false;">🔒 ປ່ຽນລະຫັດຜ່ານ</a>
           <a href="#" onclick="alert('ກິ່ງສະດາ Version 1.0.0'); return false;">ℹ️ ຂໍ້ມູນລະບົບ</a>
           <a href="#" id="admin-menu" onclick="goToAdmin(); return false;" style="color:#f59e0b; display:none;">⚙️ ລະບົບ Admin</a>
@@ -250,15 +249,15 @@ const UI_I18N = {
   lo: {
     sidebarTitle: 'ການຕັ້ງຄ່າບັນຊີ',
     profile: '👤 ຂໍ້ມູນສ່ວນຕົວ',
-    cart: '🛒 ກະຕ່າສິນຄ້າ',
+    wishlist: '❤️ ລາຍການທີ່ສົນໃຈ',
     changePass: '🔒 ປ່ຽນລະຫັດຜ່ານ',
     systemInfo: 'ℹ️ ຂໍ້ມູນລະບົບ',
     admin: '⚙️ ລະບົບ Admin',
     langTitle: '🌐 ປ່ຽນພາສາ',
-    addCart: 'ເພີ່ມລົງກະຕ່າ',
+    interested: 'ສົນໃຈ',
+    interestedDone: '❤️ ສົນໃຈແລ້ວ',
     emptyProducts: 'ບໍ່ພົບສິນຄ້າ',
     searchPlaceholder: 'ຄົ້ນຫາສິນຄ້າ...',
-    history: '📋 ປະຫວັດສັ່ງຊື້',
     login: '🔑 ເຂົ້າສູ່ລະບົບ',
     register: '📝 ສະໝັກສະມາຊິກ',
     logout: '🚪 ອອກຈາກລະບົບ',
@@ -267,15 +266,15 @@ const UI_I18N = {
   en: {
     sidebarTitle: 'Account Settings',
     profile: '👤 Profile',
-    cart: '🛒 Shopping Cart',
+    wishlist: '❤️ Wishlist',
     changePass: '🔒 Change Password',
     systemInfo: 'ℹ️ System Info',
     admin: '⚙️ Admin Panel',
     langTitle: '🌐 Language',
-    addCart: 'Add to Cart',
+    interested: 'Interested',
+    interestedDone: '❤️ Saved',
     emptyProducts: 'No products found',
     searchPlaceholder: 'Search products...',
-    history: '📋 Order History',
     login: '🔑 Login',
     register: '📝 Register',
     logout: '🚪 Logout',
@@ -298,15 +297,8 @@ function applyLanguage(lang) {
   const profileLink = document.querySelector('.sidebar-menu-links a[href="profile.html"]');
   if (profileLink) profileLink.textContent = ui.profile;
 
-  const historyLink = document.getElementById('history-menu');
-  if (historyLink) historyLink.textContent = ui.history;
-
-  const cartLink = document.querySelector('.sidebar-menu-links a[href="cart.html"]');
-  if (cartLink) {
-    const badge = cartLink.querySelector('.cart-badge');
-    cartLink.textContent = ui.cart;
-    if (badge) cartLink.appendChild(badge);
-  }
+  const wishlistLink = document.querySelector('.sidebar-menu-links a[href="wishlist.html"]');
+  if (wishlistLink) wishlistLink.textContent = ui.wishlist;
 
   const sidebarLinks = document.querySelectorAll('.sidebar-menu-links > a[href="#"]');
   if (sidebarLinks[0]) sidebarLinks[0].textContent = ui.changePass;
@@ -344,22 +336,22 @@ function highlightActiveNav() {
   });
 }
 
-function updateCartBadge() {
+function updateWishlistBadge() {
   let count = 0;
   try {
-    const cart = JSON.parse(localStorage.getItem('ksd_cart')) || [];
-    count = cart.reduce((s, i) => s + Number(i.quantity || 0), 0);
+    const list = JSON.parse(localStorage.getItem('ksd_wishlist')) || [];
+    count = list.length;
   } catch { /* ignore */ }
 
-  const cartLink = document.querySelector('.sidebar-menu-links a[href="cart.html"]');
-  if (!cartLink) return;
+  const wishlistLink = document.querySelector('.sidebar-menu-links a[href="wishlist.html"]');
+  if (!wishlistLink) return;
 
-  cartLink.classList.add('cart-link');
-  let badge = cartLink.querySelector('.cart-badge');
+  wishlistLink.classList.add('wishlist-link');
+  let badge = wishlistLink.querySelector('.wishlist-badge');
   if (!badge) {
     badge = document.createElement('span');
-    badge.className = 'cart-badge';
-    cartLink.appendChild(badge);
+    badge.className = 'wishlist-badge';
+    wishlistLink.appendChild(badge);
   }
   if (count > 0) {
     badge.textContent = count > 99 ? '99+' : count;
@@ -368,6 +360,9 @@ function updateCartBadge() {
     badge.style.display = 'none';
   }
 }
+
+// Keep legacy name for any residual calls
+function updateCartBadge() { updateWishlistBadge(); }
 
 const FALLBACK_IMAGE = 'Image/KSD.svg';
 
@@ -620,7 +615,6 @@ function updateSidebarUI() {
   const badge = document.getElementById('user-role-badge');
   const adminMenu = document.getElementById('admin-menu');
   const profileLink = document.querySelector('.sidebar-menu-links a[href="profile.html"]');
-  const historyLink = document.getElementById('history-menu');
   const passLinks = document.querySelectorAll('.sidebar-menu-links > a[href="#"]');
 
   if (nameEl) nameEl.innerText = name;
@@ -628,7 +622,6 @@ function updateSidebarUI() {
   if (badge) badge.innerText = loggedIn ? ((admin) ? '👑 Admin' : '👤 Member') : '—';
   if (adminMenu) adminMenu.style.display = admin ? 'block' : 'none';
   if (profileLink) profileLink.style.display = loggedIn ? '' : 'none';
-  if (historyLink) historyLink.style.display = loggedIn ? '' : 'none';
   if (passLinks[0]) passLinks[0].style.display = loggedIn ? '' : 'none';
 
   updateAuthUI();
@@ -710,13 +703,16 @@ function renderProducts() {
     const products = getProducts();
     const lang = localStorage.getItem('ksd_lang') || 'lo';
     const ui = UI_I18N[lang] || UI_I18N.lo;
+    const wishlist = getWishlist();
 
     if (!products.length) {
         grid.innerHTML = `<div class="product-empty">${ui.emptyProducts}</div>`;
         return;
     }
 
-    grid.innerHTML = products.map(p => `
+    grid.innerHTML = products.map(p => {
+        const saved = wishlist.some(w => String(w.id) === String(p.id));
+        return `
         <div class="product-card">
             <div class="product-img">
                 <img src="${escapeAttr(p.image || 'Image/KSD.svg')}" alt="${escapeAttr(p.name)}" onerror="this.src='Image/KSD.svg'">
@@ -725,42 +721,57 @@ function renderProducts() {
                 <h3>${escapeHtml(p.name)}</h3>
                 <p class="price">${Number(p.price || 0).toLocaleString()} ກີບ</p>
                 <p class="desc">${escapeHtml(p.desc)}</p>
-                <button class="btn-buy"
+                <button class="btn-interested ${saved ? 'saved' : ''}"
                     data-id="${escapeAttr(String(p.id))}"
                     data-name="${escapeAttr(p.name)}"
                     data-price="${Number(p.price || 0)}"
                     data-image="${escapeAttr(p.image || 'Image/KSD.svg')}"
-                >${ui.addCart}</button>
+                >${saved ? (ui.interestedDone || '❤️ ສົນໃຈແລ້ວ') : (ui.interested || 'ສົນໃຈ')}</button>
             </div>
-        </div>
-    `).join('');
+        </div>`;
+    }).join('');
 }
 
 
 
 
-// ========== CART (ksd_cart key) ==========
-function addToCart(id, name, price, image) {
+// ========== WISHLIST (ksd_wishlist key) ==========
+function getWishlist() {
+  try {
+    return JSON.parse(localStorage.getItem('ksd_wishlist')) || [];
+  } catch { return []; }
+}
+
+function toggleWishlist(id, name, price, image) {
   if (!id || !name) {
-    showToast('❌ ບໍ່ສາມາດເພີ່ມສິນຄ້ານີ້ໄດ້');
+    showToast('❌ ບໍ່ສາມາດບັນທຶກສິນຄ້ານີ້ໄດ້');
     return;
   }
-  const numPrice = Number(price);
-  if (Number.isNaN(numPrice) || numPrice < 0) {
-    showToast('❌ ລາຄາສິນຄ້າບໍ່ຖືກຕ້ອງ');
-    return;
-  }
-  let cart = JSON.parse(localStorage.getItem('ksd_cart')) || [];
-  const existing = cart.find(i => String(i.id) === String(id));
-  if (existing) {
-    existing.quantity = Number(existing.quantity) + 1;
+  let list = getWishlist();
+  const lang = localStorage.getItem('ksd_lang') || 'lo';
+  const ui = UI_I18N[lang] || UI_I18N.lo;
+  const exists = list.findIndex(i => String(i.id) === String(id));
+  if (exists >= 0) {
+    list.splice(exists, 1);
+    showToast(`💔 ລຶບ "${name}" ອອກຈາກລາຍການສົນໃຈ`);
   } else {
-    cart.push({ id: String(id), name, price: numPrice, image: image || FALLBACK_IMAGE, quantity: 1 });
+    list.push({ id: String(id), name, price: Number(price) || 0, image: image || FALLBACK_IMAGE });
+    showToast(`❤️ ບັນທຶກ "${name}" ໄວ້ໃນລາຍການສົນໃຈ!`);
   }
-  localStorage.setItem('ksd_cart', JSON.stringify(cart));
-  updateCartBadge();
-  showToast(`🛒 ເພີ່ມ "${name}" ເຂົ້າກະຕ່າແລ້ວ!`);
+  localStorage.setItem('ksd_wishlist', JSON.stringify(list));
+  updateWishlistBadge();
+  // update button state in grid
+  const btn = document.querySelector(`.btn-interested[data-id="${id}"]`);
+  if (btn) {
+    const saved = list.some(i => String(i.id) === String(id));
+    btn.classList.toggle('saved', saved);
+    btn.textContent = saved ? (ui.interestedDone || '❤️ ສົນໃຈແລ້ວ') : (ui.interested || 'ສົນໃຈ');
+  }
 }
+
+// Legacy stub — no-op (cart removed)
+function addToCart() {}
+
 
 // ========== TOAST NOTIFICATION ==========
 function showToast(msg) {
@@ -911,9 +922,9 @@ async function syncUsersToFirebase(users) {
 
 // ========== INIT ON LOAD ==========
 document.addEventListener('click', e => {
-  const btn = e.target.closest('.btn-buy');
+  const btn = e.target.closest('.btn-interested');
   if (btn) {
-    addToCart(btn.dataset.id, btn.dataset.name, btn.dataset.price, btn.dataset.image);
+    toggleWishlist(btn.dataset.id, btn.dataset.name, btn.dataset.price, btn.dataset.image);
   }
 });
 
@@ -936,7 +947,7 @@ document.addEventListener('DOMContentLoaded', () => {
   guardHistoryAccess();
   guardAdminAccess();
   updateSidebarUI();
-  updateCartBadge();
+  updateWishlistBadge();
   restoreLanguage();
   renderProducts();
 
