@@ -3,7 +3,23 @@
  * ໂຄ້ດທີ່ໃຊ້ຮ່ວມກັນທຸກໜ້າ: Drag button, Sidebar, Auth UI, Products, Cart
  * Updated: Real-time Firebase sync for all data
  */
-
+// ========== I18N ==========
+const NAV_I18N = {
+  lo: {
+    'index.html': 'ໜ້າຫຼັກ',
+    'products.html': 'ສິນຄ້າ',
+    'services.html': 'ບໍລິການ',
+    'about.html': 'ກ່ຽວກັບເຮົາ',
+    'contact.html': 'ຕິດຕໍ່',
+  },
+  en: {
+    'index.html': 'Home',
+    'products.html': 'Products',
+    'services.html': 'Services',
+    'about.html': 'About',
+    'contact.html': 'Contact',
+  },
+};
 // ========== FIREBASE CONFIG ==========
 const FIREBASE_CONFIG = {
   apiKey: 'AIzaSyB_JcmHbO_kOy9v3rvstiqDoIgBYndRfZI',
@@ -226,25 +242,6 @@ function injectSharedUI() {
     `);
   }
 }
-
-// ========== I18N ==========
-const NAV_I18N = {
-  lo: {
-    'index.html': 'ໜ້າຫຼັກ',
-    'products.html': 'ສິນຄ້າ',
-    'services.html': 'ບໍລິການ',
-    'about.html': 'ກ່ຽວກັບເຮົາ',
-    'contact.html': 'ຕິດຕໍ່',
-  },
-  en: {
-    'index.html': 'Home',
-    'products.html': 'Products',
-    'services.html': 'Services',
-    'about.html': 'About',
-    'contact.html': 'Contact',
-  },
-};
-
 const UI_I18N = {
   lo: {
     sidebarTitle: 'ການຕັ້ງຄ່າບັນຊີ',
