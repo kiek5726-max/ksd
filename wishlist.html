@@ -162,6 +162,11 @@
       list.forEach(item => {
         const card = document.createElement('div');
         card.className = 'wishlist-card';
+        card.style.cursor = 'pointer';
+        card.onclick = (e) => {
+          if (e.target.closest('.btn-remove')) return;
+          window.location.href = 'product-detail.html?id=' + encodeURIComponent(item.id);
+        };
         card.innerHTML = `
           <img src="${escapeAttr(item.image || 'Image/KSD.svg')}" alt="${escapeAttr(item.name)}" onerror="this.src='Image/KSD.svg'">
           <div class="wishlist-card-info">

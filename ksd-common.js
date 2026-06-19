@@ -726,7 +726,7 @@ function renderProducts() {
     grid.innerHTML = products.map(p => {
         const saved = wishlist.some(w => String(w.id) === String(p.id));
         return `
-        <div class="product-card">
+        <div class="product-card" data-id="${escapeAttr(String(p.id))}" onclick="goToProductDetail(event, '${escapeAttr(String(p.id))}')" style="cursor:pointer;">
             <div class="product-img">
                 <img src="${escapeAttr(p.image || 'Image/KSD.svg')}" alt="${escapeAttr(p.name)}" onerror="this.src='Image/KSD.svg'">
             </div>
@@ -761,6 +761,14 @@ function syncWishlistButtons(wishlist, ui) {
 
 
 
+
+// ========== PRODUCT DETAIL NAVIGATION ==========
+function goToProductDetail(e, id) {
+  // ກັນບໍ່ໃຫ້ກົດປຸ່ມ "ສົນໃຈ" ແລ້ວເດັ້ງໄປໜ້າລາຍລະອຽດພ້ອມກັນ
+  if (e && e.target && e.target.closest('.btn-interested')) return;
+  if (!id) return;
+  window.location.href = 'product-detail.html?id=' + encodeURIComponent(id);
+}
 
 // ========== WISHLIST (ksd_wishlist key) ==========
 function getWishlist() {

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ລາຍລະອຽດສິນຄ້າ - ກິ່ງສະດາ</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@300;400;500;700&display=swap">
+  <style>
+    .detail-wrap {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+    }
+    .back-btn {
+      display: inline-block;
+      margin-bottom: 28px;
+      padding: 10px 20px;
+      background-color: #004d17;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: 'Noto Sans Lao', sans-serif;
+      font-size: 14px;
+      text-decoration: none;
+    }
+    .back-btn:hover { background-color: #003311; }
+
+    .detail-card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      overflow: hidden;
+    }
+    .detail-img {
+      background: #f1f5f9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 360px;
+    }
+    .detail-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      min-height: 360px;
+    }
+    .detail-info {
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+    }
+    .detail-info h1 {
+      font-size: 26px;
+      color: #1e293b;
+      margin-bottom: 14px;
+      line-height: 1.4;
+    }
+    .detail-info .price {
+      color: #f43f5e;
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+    .detail-info .desc {
+      color: #64748b;
+      font-size: 16px;
+      line-height: 1.9;
+      margin-bottom: 30px;
+      flex-grow: 1;
+    }
+    .detail-actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .btn-interested-lg {
+      flex: 1;
+      min-width: 180px;
+      padding: 16px;
+      background-color: #f1f5f9;
+      border: 1.5px solid #e2e8f0;
+      color: #475569;
+      font-weight: 700;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: 'Noto Sans Lao', sans-serif;
+      font-size: 16px;
+    }
+    .btn-interested-lg:hover {
+      background-color: #fff0f3;
+      border-color: #e11d48;
+      color: #e11d48;
+    }
+    .btn-interested-lg.saved {
+      background-color: #fff0f3;
+      border-color: #e11d48;
+      color: #e11d48;
+    }
+    .btn-contact-lg {
+      flex: 1;
+      min-width: 180px;
+      padding: 16px;
+      background: linear-gradient(135deg, #008d13, #005a0d);
+      color: #fff;
+      font-weight: 700;
+      border-radius: 10px;
+      text-align: center;
+      text-decoration: none;
+      font-size: 16px;
+    }
+    .not-found-box {
+      text-align: center;
+      color: #94a3b8;
+      padding: 80px 20px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    }
+    .not-found-box p { font-size: 16px; margin-top: 10px; }
+
+    @media (max-width: 700px) {
+      .detail-card { grid-template-columns: 1fr; }
+      .detail-img, .detail-img img { min-height: 260px; }
+      .detail-info { padding: 26px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-container">
+      <div class="logo"><h2>KSD<span>ກິ່ງສະດາ</span></h2></div>
+      <nav class="nav-menu">
+        <ul>
+          <li><a href="index.html">ໜ້າຫຼັກ</a></li>
+          <li><a href="products.html">ສິນຄ້າ</a></li>
+          <li><a href="services.html">ບໍລິການ</a></li>
+          <li><a href="about.html">ກ່ຽວກັບເຮົາ</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <div class="detail-wrap">
+    <a href="javascript:void(0)" onclick="goBack()" class="back-btn">⬅️ ກັບໄປລາຍການສິນຄ້າ</a>
+    <div id="detail-container"></div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-about">
+        <h3>ກ່ຽວກັບໂຄງການ</h3>
+        <p>ເວັບໄຊທ໌ນີ້ເປັນສ່ວນໜຶ່ງຂອງວິຊາຮຽນ ພັດທະນາຂຶ້ນມາເພື່ອທົດສອບ Responsive Design.</p>
+      </div>
+      <div class="footer-team">
+        <h3>DEV</h3>
+        <div class="team-grid">
+          <div class="member">
+            <img src="Image/Prosli.jpeg" alt="Soukpasert" class="profile-avatar" onerror="this.style.display='none'">
+            <div class="member-info">
+              <p class="name">ທ້າວ ສຸກປະເສີດ ດວງບຸຜາ</p>
+              <p class="role">ເບີໂທ: +856 20 548 35745</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 ພັດທະນາໂດຍ ນ້ອງນັກສຶກສາ. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <script src="ksd-common.js"></script>
+  <script>
+    function goBack() {
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.location.href = 'products.html';
+      }
+    }
+
+    function getProductIdFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('id');
+    }
+
+    function renderProductDetail() {
+      const container = document.getElementById('detail-container');
+      const id = getProductIdFromUrl();
+      const products = getProducts();
+      const product = products.find(p => String(p.id) === String(id));
+
+      if (!product) {
+        container.innerHTML = `
+          <div class="not-found-box">
+            <div style="font-size:48px;">🔍</div>
+            <p>ບໍ່ພົບສິນຄ້ານີ້</p>
+            <a href="products.html" style="display:inline-block; margin-top:16px; color:#008d13; font-weight:600; text-decoration:none;">ເລືອກດູສິນຄ້າອື່ນ →</a>
+          </div>`;
+        return;
+      }
+
+      const wishlist = getWishlist();
+      const saved = wishlist.some(w => String(w.id) === String(product.id));
+      const lang = localStorage.getItem('ksd_lang') || 'lo';
+      const ui = UI_I18N[lang] || UI_I18N.lo;
+
+      document.title = product.name + ' - ກິ່ງສະດາ';
+
+      container.innerHTML = `
+        <div class="detail-card">
+          <div class="detail-img">
+            <img src="${escapeAttr(product.image || 'Image/KSD.svg')}" alt="${escapeAttr(product.name)}" onerror="this.src='Image/KSD.svg'">
+          </div>
+          <div class="detail-info">
+            <h1>${escapeHtml(product.name)}</h1>
+            <p class="price">${Number(product.price || 0).toLocaleString()} ກີບ</p>
+            <p class="desc">${escapeHtml(product.desc) || 'ບໍ່ມີລາຍລະອຽດເພີ່ມເຕີມສຳລັບສິນຄ້ານີ້.'}</p>
+            <div class="detail-actions">
+              <button id="detail-wishlist-btn" class="btn-interested-lg ${saved ? 'saved' : ''}"
+                data-id="${escapeAttr(String(product.id))}"
+                data-name="${escapeAttr(product.name)}"
+                data-price="${Number(product.price || 0)}"
+                data-image="${escapeAttr(product.image || 'Image/KSD.svg')}"
+                onclick="handleDetailWishlistClick(this)"
+              >${saved ? (ui.interestedDone || '❤️ ສົນໃຈແລ້ວ') : (ui.interested || '🤍 ສົນໃຈສິນຄ້ານີ້')}</button>
+              <a href="contact.html" class="btn-contact-lg">📞 ຕິດຕໍ່ສັ່ງຊື້</a>
+            </div>
+          </div>
+        </div>`;
+    }
+
+    function handleDetailWishlistClick(btn) {
+      toggleWishlist(btn.dataset.id, btn.dataset.name, btn.dataset.price, btn.dataset.image);
+      const wishlist = getWishlist();
+      const lang = localStorage.getItem('ksd_lang') || 'lo';
+      const ui = UI_I18N[lang] || UI_I18N.lo;
+      const saved = wishlist.some(w => String(w.id) === String(btn.dataset.id));
+      btn.classList.toggle('saved', saved);
+      btn.textContent = saved ? (ui.interestedDone || '❤️ ສົນໃຈແລ້ວ') : (ui.interested || '🤍 ສົນໃຈສິນຄ້ານີ້');
+    }
+
+    document.addEventListener('DOMContentLoaded', renderProductDetail);
+  </script>
+
+</body>
+</html>
