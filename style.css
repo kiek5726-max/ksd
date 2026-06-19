@@ -43,6 +43,17 @@ body {
   font-weight: 700;
 }
 .logo h2 span { color: #008d13; }
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.logo img {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  border-radius: 50%;
+}
 
 /* --- Nav --- */
 .nav-menu ul {
@@ -106,7 +117,7 @@ body {
 .banner-section {
   position: relative;
   height: 450px;
-  background-image: url('Image/');
+  background-image: url('Image/KSD-logo.png');
   background-size: cover;
   background-position: center;
   display: flex;
@@ -286,6 +297,24 @@ body {
 }
 .member-info .name { color: #ffffff; font-weight: 500; margin-bottom: 4px; }
 .member-info .role { font-size: 13px; }
+.footer-company-info {
+  background-color: #0d2e1c;
+  border-radius: 10px;
+  padding: 18px 20px;
+}
+.footer-company-info p {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  line-height: 1.7;
+  margin-bottom: 10px;
+}
+.footer-company-info p:last-child { margin-bottom: 0; }
+.footer-company-info .company-name {
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 15px;
+}
 .footer-bottom {
   text-align: center;
   padding-top: 20px;
