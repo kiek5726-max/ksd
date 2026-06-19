@@ -314,13 +314,26 @@
     ];
 }
 
+  function _stableIdFromString(str) {
+    let hash = 0;
+    const s = String(str);
+    for (let i = 0; i < s.length; i++) {
+      hash = (hash << 5) - hash + s.charCodeAt(i);
+      hash |= 0;
+    }
+    return 'p_' + Math.abs(hash);
+  }
+
   function normProd(p) {
     if (!p || !p.name) return null;
+    const name = String(p.name).trim();
+    const price = Math.max(0, Number(p.price) || 0);
+    const desc = String(p.desc || '').trim();
     return {
-      id:    p.id ?? Date.now(),
-      name:  String(p.name).trim(),
-      price: Math.max(0, Number(p.price) || 0),
-      desc:  String(p.desc || '').trim(),
+      id:    p.id != null && p.id !== '' ? p.id : _stableIdFromString(name + '|' + price + '|' + desc),
+      name,
+      price,
+      desc,
       image: String(p.image || 'Image/KSD.svg').trim() || 'Image/KSD.svg',
     };
   }

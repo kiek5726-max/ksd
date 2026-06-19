@@ -665,15 +665,29 @@ window.DEFAULT_PRODUCTS = [
   { id: 4, name: 'ນ້ຳໝາກໄມ້ຊາດາ', price: 99000, desc: 'ນ້ຳໝາກໄມ້ ຫອມຫວານ ຫຼາຍລົດຊາດ', image: 'Image/3.jpg' },
 ];
 
+// ສ້າງ ID ແບບຄົງທີ່ (deterministic) ຈາກຊື່+ລາຄາ+ລາຍລະອຽດ — ໃຊ້ສະເພາະເວລາສິນຄ້າບໍ່ມີ id
+// ສຳຄັນ: ບໍ່ໃຊ້ Date.now() ເພາະຄ່າຈະປ່ຽນທຸກຄັ້ງທີ່ render() ໃໝ່ ເຮັດໃຫ້ wishlist ບໍ່ກົງກັນ (bug ສົ່ນໃຈໄດ້ແຕ່ອັນດຽວ)
+function _stableIdFromString(str) {
+  let hash = 0;
+  const s = String(str);
+  for (let i = 0; i < s.length; i++) {
+    hash = (hash << 5) - hash + s.charCodeAt(i);
+    hash |= 0; // 32-bit
+  }
+  return 'p_' + Math.abs(hash);
+}
+
 function normalizeProduct(p) {
   if (!p || typeof p !== 'object') return null;
   const name = String(p.name || '').trim();
   if (!name) return null;
+  const price = Math.max(0, Number(p.price) || 0);
+  const desc = String(p.desc || '').trim();
   return {
-    id: p.id != null ? p.id : Date.now(),
+    id: p.id != null && p.id !== '' ? p.id : _stableIdFromString(name + '|' + price + '|' + desc),
     name,
-    price: Math.max(0, Number(p.price) || 0),
-    desc: String(p.desc || '').trim(),
+    price,
+    desc,
     image: String(p.image || FALLBACK_IMAGE).trim() || FALLBACK_IMAGE,
   };
 }
