@@ -716,11 +716,10 @@ function renderProducts() {
     if (!grid) return;
 
     const products = getProducts();
-    const lang = localStorage.getItem('ksd_lang') || 'lo';
-    const ui = UI_I18N[lang] || UI_I18N.lo;
-    const wishlist = getWishlist();
 
     if (!products.length) {
+        const lang = localStorage.getItem('ksd_lang') || 'lo';
+        const ui = UI_I18N[lang] || UI_I18N.lo;
         grid.innerHTML = `<div class="product-empty">${ui.emptyProducts}</div>`;
         _lastProductHash = '';
         return;
@@ -730,15 +729,13 @@ function renderProducts() {
     const gridAlreadyBuilt = grid.querySelectorAll('.product-card').length > 0;
 
     if (gridAlreadyBuilt && newHash === _lastProductHash) {
-        // ສິນຄ້າບໍ່ໄດ້ປ່ຽນ — ອັບເດດສະຖານະປຸ່ມທຸກໆ ອັນໂດຍບໍ່ re-render
-        syncWishlistButtons(wishlist, ui);
+        // ສິນຄ້າບໍ່ໄດ້ປ່ຽນ — ບໍ່ຈຳເປັນຕ້ອງ re-render
         return;
     }
 
     _lastProductHash = newHash;
 
     grid.innerHTML = products.map(p => {
-        const saved = wishlist.some(w => String(w.id) === String(p.id));
         return `
         <div class="product-card" data-id="${escapeAttr(String(p.id))}" onclick="goToProductDetail(event, '${escapeAttr(String(p.id))}')" style="cursor:pointer;">
             <div class="product-img">
@@ -748,12 +745,7 @@ function renderProducts() {
                 <h3>${escapeHtml(p.name)}</h3>
                 <p class="price">${Number(p.price || 0).toLocaleString()} ກີບ</p>
                 <p class="desc">${escapeHtml(p.desc)}</p>
-                <button class="btn-interested ${saved ? 'saved' : ''}"
-                    data-id="${escapeAttr(String(p.id))}"
-                    data-name="${escapeAttr(p.name)}"
-                    data-price="${Number(p.price || 0)}"
-                    data-image="${escapeAttr(p.image || 'Image/KSD.svg')}"
-                >${saved ? (ui.interestedDone || '❤️ ສົນໃຈແລ້ວ') : (ui.interested || 'ສົນໃຈ')}</button>
+                <button class="btn-view-detail" data-id="${escapeAttr(String(p.id))}">ເບິ່ງລາຍລະອຽດ</button>
             </div>
         </div>`;
     }).join('');
@@ -769,7 +761,7 @@ function syncWishlistButtons(wishlist, ui) {
     document.querySelectorAll('.btn-interested').forEach(btn => {
         const saved = wishlist.some(w => String(w.id) === String(btn.dataset.id));
         btn.classList.toggle('saved', saved);
-        btn.textContent = saved ? (ui.interestedDone || '❤️ ສົນໃຈແລ້ວ') : (ui.interested || 'ສົນໃຈ');
+
     });
 }
 
@@ -778,8 +770,6 @@ function syncWishlistButtons(wishlist, ui) {
 
 // ========== PRODUCT DETAIL NAVIGATION ==========
 function goToProductDetail(e, id) {
-  // ກັນບໍ່ໃຫ້ກົດປຸ່ມ "ສົນໃຈ" ແລ້ວເດັ້ງໄປໜ້າລາຍລະອຽດພ້ອມກັນ
-  if (e && e.target && e.target.closest('.btn-interested')) return;
   if (!id) return;
   window.location.href = 'product-detail.html?id=' + encodeURIComponent(id);
 }

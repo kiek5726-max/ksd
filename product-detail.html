@@ -134,7 +134,9 @@
 
   <header class="site-header">
     <div class="header-container">
-      <div class="logo"><h2>KSD<span>ກິ່ງສະດາ</span></h2></div>
+      <div class="logo">
+        <img src="Image/banner.jpg" alt="KSD ກິ່ງສະດາ" onerror="this.style.display='none'">
+      </div>
       <nav class="nav-menu">
         <ul>
           <li><a href="index.html">ໜ້າຫຼັກ</a></li>
@@ -151,22 +153,16 @@
     <div id="detail-container"></div>
   </div>
 
+  <!-- Footer -->
   <footer class="site-footer">
     <div class="footer-container">
       <div class="footer-about">
-        <h3>ກ່ຽວກັບໂຄງການ</h3>
-        <p>ເວັບໄຊທ໌ນີ້ເປັນສ່ວນໜຶ່ງຂອງວິຊາຮຽນ ພັດທະນາຂຶ້ນມາເພື່ອທົດສອບ Responsive Design.</p>
-      </div>
       <div class="footer-team">
-        <h3>DEV</h3>
-        <div class="team-grid">
-          <div class="member">
-            <img src="Image/Prosli.jpeg" alt="Soukpasert" class="profile-avatar" onerror="this.style.display='none'">
-            <div class="member-info">
-              <p class="name">ທ້າວ ສຸກປະເສີດ ດວງບຸຜາ</p>
-              <p class="role">ເບີໂທ: +856 20 548 35745</p>
-            </div>
-          </div>
+        <h3>ຂໍ້ມູນຕິດຕໍ່</h3>
+        <div class="footer-company-info">
+          <p class="company-name">📦 ກິ່ງສະດາ ຂົນສົ່ງ ແລະ ການຄ້າ ຂາເຂົ້າ-ຂາອອກ ຈໍາກັດ</p>
+          <p>📞 ເບີໂທ: +856 20 597 49299</p>
+          <p>📍 ນະຄອນຫຼວງວຽງຈັນ, ສປປ ລາວ</p>
         </div>
       </div>
     </div>
@@ -230,8 +226,8 @@
                 data-image="${escapeAttr(product.image || 'Image/KSD.svg')}"
                 onclick="handleDetailWishlistClick(this)"
               >${saved ? (ui.interestedDone || '❤️ ສົນໃຈແລ້ວ') : (ui.interested || '🤍 ສົນໃຈສິນຄ້ານີ້')}</button>
-              <a href="contact.html" class="btn-contact-lg">📞 ຕິດຕໍ່ສັ່ງຊື້</a>
-              <a href="javascript:void(0)" onclick="goBack()" class="back-btn">⬅️ ກັບໄປລາຍການສິນຄ້າ</a>
+              <a href="contact.html" class="btn-contact-lg">ຕິດຕໍ່ສັ່ງຊື້</a>
+              <a href="javascript:void(0)" onclick="goBack()" class="back-btn">ກັບໄປລາຍການສິນຄ້າ</a>
             </div>
           </div>
         </div>`;
